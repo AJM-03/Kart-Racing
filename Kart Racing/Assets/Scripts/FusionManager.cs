@@ -7,106 +7,147 @@ using System;
 
 public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
 {
+    public static FusionManager Instance;
+
+    public bool connectOnAwake = false;
+    [HideInInspector] public NetworkRunner networkRunner;
+
+    [SerializeField] NetworkObject playerPrefab;
+
+    [HideInInspector] public string playerName;
+
+
+    private void Awake()
+    {
+        if (Instance == null) { Instance = this; }
+
+        if (connectOnAwake)
+        {
+            ConnectToRunner("Anonymous");
+        }
+    }
+
+
+    public async void ConnectToRunner(string _playerName)
+    {
+        playerName = _playerName;
+
+        if (networkRunner == null)
+        {
+            networkRunner = gameObject.AddComponent<NetworkRunner>();
+        }
+
+        await networkRunner.StartGame(new StartGameArgs()
+        {
+            GameMode = GameMode.Shared,
+            SessionName = "TestRoom",
+            PlayerCount = 2,
+        });
+    }
+
+
     public void OnConnectedToServer(NetworkRunner runner)
     {
         Debug.Log("Connected to server");
-        throw new NotImplementedException();
+
+        NetworkObject playerObject = networkRunner.Spawn(playerPrefab, Vector3.zero);  // Spawn the player object
+        networkRunner.SetPlayerObject(networkRunner.LocalPlayer, playerObject);  // Tell the runner that it is the local player
     }
 
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
         Debug.LogError("Server connection failed");
-        throw new NotImplementedException();
+
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
         Debug.Log("Connect request");
-        throw new NotImplementedException();
+
     }
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
     {
         Debug.Log("Disconnected to server");
-        throw new NotImplementedException();
+
     }
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
     {
         Debug.Log("Host migrating");
-        throw new NotImplementedException();
+
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         Debug.Log("Player joined");
-        throw new NotImplementedException();
+
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         Debug.Log("Player left");
-        throw new NotImplementedException();
+
     }
 
     public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnSceneLoadDone(NetworkRunner runner)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnSceneLoadStart(NetworkRunner runner)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
         Debug.Log("Server shutdown");
-        throw new NotImplementedException();
+
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
     {
-        throw new NotImplementedException();
+
     }
 }
