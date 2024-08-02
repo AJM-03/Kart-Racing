@@ -11,7 +11,7 @@ public class NameEntry : MonoBehaviour
 
     public void SubmitName()
     {
-        FusionManager.Instance.ConnectToRunner(inputField.text);
+        FusionManager.Instance.ConnectToLobby(inputField.text);
         inputField.gameObject.SetActive(false);
     }
 
