@@ -2,21 +2,14 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Ll]ogs/
-[Uu]ser[Ss]ettings/
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
 
-/Kart Racing/Library/
-/Kart Racing/Temp/
-/Kart Racing/Obj/
-/Kart Racing/Build/
-/Kart Racing/Builds/
-/Kart Racing/Logs/
-/Kart Racing/UserSettings/
 
 
 # MemoryCaptures can get excessive in size.

@@ -1,5 +1,0 @@
-sceneSetups:
-- path: Assets/3rd Party/StarterAssets/ThirdPersonController/Scenes/Playground.unity
-  isLoaded: 1
-  isActive: 1
-  isSubScene: 0
