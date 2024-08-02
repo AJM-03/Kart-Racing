@@ -7,7 +7,9 @@ using UnityEngine.UI;
 public class SessionEntry : MonoBehaviour
 {
     public TextMeshProUGUI sessionName;
+    public string sessionPassword;
     public TextMeshProUGUI playerCount;
+    public TextMeshProUGUI privacyText;
     public Button joinButton;
 
     private void Awake()
@@ -23,6 +25,11 @@ public class SessionEntry : MonoBehaviour
 
     private void JoinSession()
     {
-        FusionManager.Instance.ConnectToSession(sessionName.text);
+        if (privacyText.text == "Public")
+            FusionManager.Instance.ConnectToSession(sessionName.text);
+        else
+        {
+            SessionJoin.Instance.OpenJoinMenu(sessionName.text, sessionPassword);
+        }
     }
 }

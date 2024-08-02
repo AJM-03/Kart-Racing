@@ -6,6 +6,7 @@ using Fusion.Sockets;
 using System;
 using UnityEngine.UI;
 using JetBrains.Annotations;
+using TMPro;
 
 public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -17,12 +18,18 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
 
     [HideInInspector] public string playerName;
 
-    [Header("SessionList")]
+    [Header("Session List")]
     private List<SessionInfo> sessions = new List<SessionInfo>();
     public GameObject sessionListCanvas;
     public Button refreshButton;
     public Transform sessionListContent;
     public GameObject sessionEntryPrefab;
+    private bool firstLobby = false;
+
+    [Header("Session Creation")]
+    public TMP_InputField sessionNameInput;
+    public TMP_InputField sessionPassword;
+
 
 
     private void Awake()
@@ -34,8 +41,8 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
     public void ConnectToLobby(string _playerName)
     {
         playerName = _playerName;
-        sessionListCanvas.SetActive(true);
         RefreshSessionListUI();
+        sessionListCanvas.SetActive(true);
 
         if (networkRunner == null)
         {
@@ -63,12 +70,14 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
     }
 
 
-    public async void CreateSession()
+    public async void CreateSession(string sessionName, string sessionPassword, int sessionPlayerCount)
     {
-        sessionListCanvas.SetActive(false);
+        //int randomInt = UnityEngine.Random.Range(1000, 9999);
+        //string randomSessionName = "Room-" + randomInt.ToString();
 
-        int randomInt = UnityEngine.Random.Range(1000, 9999);
-        string randomSessionName = "Room-" + randomInt.ToString();
+        SessionProperty key = sessionPassword;
+        Dictionary<string, SessionProperty> sessionProperties = new Dictionary<string, SessionProperty>();
+        sessionProperties.Add("sessionKey", key);
 
         if (networkRunner == null)
         {
@@ -78,17 +87,23 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
         await networkRunner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Shared,
-            SessionName = randomSessionName,
-            PlayerCount = 8,
+            SessionName = sessionName,
+            SessionProperties = sessionProperties, 
+            PlayerCount = sessionPlayerCount,
         });
     }
 
 
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
-        Debug.Log("Session List Updated");
         sessions.Clear();
         sessions = sessionList;
+
+        if (!firstLobby)
+        {
+            RefreshSessionListUI();
+            firstLobby = true;
+        }
     }
 
 
@@ -108,6 +123,8 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
                 SessionEntry script = entry.GetComponent<SessionEntry>();
                 script.sessionName.text = session.Name;
                 script.playerCount.text = session.PlayerCount + "/" + session.MaxPlayers;
+                script.privacyText.text = script.sessionPassword == "" ? "Private" : "Public";
+                script.sessionPassword = session.Properties.GetValueOrDefault("sessionKey").PropertyValue as string;
 
                 if (!session.IsOpen || session.PlayerCount >= session.MaxPlayers)
                 {
