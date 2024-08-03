@@ -123,8 +123,8 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
                 SessionEntry script = entry.GetComponent<SessionEntry>();
                 script.sessionName.text = session.Name;
                 script.playerCount.text = session.PlayerCount + "/" + session.MaxPlayers;
-                script.privacyText.text = script.sessionPassword == "" ? "Private" : "Public";
                 script.sessionPassword = session.Properties.GetValueOrDefault("sessionKey").PropertyValue as string;
+                script.privacyText.text = script.sessionPassword == "" ? "Public" : "Private";
 
                 if (!session.IsOpen || session.PlayerCount >= session.MaxPlayers)
                 {
