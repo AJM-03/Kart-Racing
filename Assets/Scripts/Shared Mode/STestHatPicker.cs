@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HatPicker : MonoBehaviour
+public class STestHatPicker : MonoBehaviour
 {
     public void OnMouseOver()
     {
@@ -17,7 +17,7 @@ public class HatPicker : MonoBehaviour
 
     public void OnMouseDown()
     {
-        int hatIndex = Hats.hats.IndexOf(this.gameObject);
+        int hatIndex = STestHats.hats.IndexOf(this.gameObject);
 
         PlayerStats.Instance.hatIndex = hatIndex;
     }

@@ -8,9 +8,9 @@ using UnityEngine.UI;
 using JetBrains.Annotations;
 using TMPro;
 
-public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
+public class STestFusionManager : MonoBehaviour, INetworkRunnerCallbacks
 {
-    public static FusionManager Instance;
+    public static STestFusionManager Instance;
 
     [HideInInspector] public NetworkRunner networkRunner;
 

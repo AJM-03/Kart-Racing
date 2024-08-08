@@ -3,15 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static Fusion.NetworkBehaviour;
 
-public class PlayerStats : NetworkBehaviour
+public class STestPlayerStats : NetworkBehaviour
 {
-    public static PlayerStats Instance;
+    public static STestPlayerStats Instance;
 
     [Networked, OnChangedRender(nameof(OnNameChanged))] public NetworkString<_32> PlayerName {  get; set; }
 
     [Networked, OnChangedRender(nameof(OnHatChanged))] public int hatIndex { get; set; }
+
+    [Networked, OnChangedRender(nameof(OnHealthChanged))] public float health { get; set; }
 
     [SerializeField] TextMeshPro playerNameLabel;
 
@@ -19,13 +22,15 @@ public class PlayerStats : NetworkBehaviour
 
     [SerializeField] private Transform playerHead;
 
+    [SerializeField] private Image healthBar;
+
 
     private void Start()
     {
         if (this.HasStateAuthority)
         {
             if (Instance == null) Instance = this;
-            PlayerName = FusionManager.Instance.playerName;
+            PlayerName = STestFusionManager.Instance.playerName;
         }
     }
 
@@ -35,14 +40,25 @@ public class PlayerStats : NetworkBehaviour
         OnHatChanged();
     }
 
+    public void HurtMe()
+    {
+        health -= 10;
+    }
+
     public void OnNameChanged()
     {
+        transform.root.gameObject.name = PlayerName.ToString();
         playerNameLabel.text = PlayerName.ToString();
+    }
+
+    public void OnHealthChanged()
+    {
+        healthBar.transform.localScale = new Vector3(health / 100, 1, 1);
     }
 
     public void OnHatChanged()
     {
-        GameObject hat = Hats.hats[hatIndex];
+        GameObject hat = STestHats.hats[hatIndex];
 
         if (currentHat != null) Destroy(currentHat);
 
@@ -53,5 +69,7 @@ public class PlayerStats : NetworkBehaviour
         newHat.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
         newHat.GetComponent<BoxCollider>().enabled = false;
         currentHat = newHat;
+
+        HurtMe();
     }
 }

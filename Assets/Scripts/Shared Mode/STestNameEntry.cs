@@ -4,14 +4,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NameEntry : MonoBehaviour
+public class STestNameEntry : MonoBehaviour
 {
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private Button submitButton;
 
     public void SubmitName()
     {
-        FusionManager.Instance.ConnectToLobby(inputField.text);
+        STestFusionManager.Instance.ConnectToLobby(inputField.text);
         inputField.gameObject.SetActive(false);
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 using Fusion;
 using StarterAssets;
 
-public class GetPlayerCamera : MonoBehaviour
+public class STestGetPlayerCamera : MonoBehaviour
 {
     [SerializeField] private Transform cameraLookAt;
 

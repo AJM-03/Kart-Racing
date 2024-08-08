@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class SessionEntry : MonoBehaviour
+public class STestSessionEntry : MonoBehaviour
 {
     public TextMeshProUGUI sessionName;
     public string sessionPassword;
@@ -26,7 +26,7 @@ public class SessionEntry : MonoBehaviour
     private void JoinSession()
     {
         if (privacyText.text == "Public")
-            FusionManager.Instance.ConnectToSession(sessionName.text);
+            STestFusionManager.Instance.ConnectToSession(sessionName.text);
         else
         {
             SessionJoin.Instance.OpenJoinMenu(sessionName.text, sessionPassword);

@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SessionCreation : MonoBehaviour
+public class STestSessionCreation : MonoBehaviour
 {
     [SerializeField] private GameObject canvas;
     [SerializeField] private GameObject sessionSearchCanvas;
@@ -17,7 +17,7 @@ public class SessionCreation : MonoBehaviour
 
     public void CreateSession()
     {
-        FusionManager.Instance.CreateSession(sessionNameInput.text, passwordInput.text, (int) playerCountSlider.value);
+        STestFusionManager.Instance.CreateSession(sessionNameInput.text, passwordInput.text, (int) playerCountSlider.value);
         canvas.SetActive(false);
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RefreshButton : MonoBehaviour
+public class STestRefreshButton : MonoBehaviour
 {
     private Button refreshButton;
 
@@ -23,7 +23,7 @@ public class RefreshButton : MonoBehaviour
     {
         refreshButton.interactable = false;
 
-        FusionManager.Instance.RefreshSessionListUI();
+        STestFusionManager.Instance.RefreshSessionListUI();
 
         yield return new WaitForSeconds(3);
 

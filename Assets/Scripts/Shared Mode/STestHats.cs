@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hats : MonoBehaviour
+public class STestHats : MonoBehaviour
 {
     public static List<GameObject> hats = new List<GameObject>();
 
@@ -15,7 +15,7 @@ public class Hats : MonoBehaviour
 
         foreach(GameObject hat in hats)
         {
-            hat.AddComponent<HatPicker>();
+            hat.AddComponent<STestHatPicker>();
         }
     }
 }

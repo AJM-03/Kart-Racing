@@ -4,9 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SessionJoin : MonoBehaviour
+public class STestSessionJoin : MonoBehaviour
 {
-    public static SessionJoin Instance;
+    public static STestSessionJoin Instance;
 
     [SerializeField] private GameObject panel;
     [SerializeField] private GameObject sessionSearchCanvas;
@@ -32,7 +32,7 @@ public class SessionJoin : MonoBehaviour
 
     public void JoinSession()
     {
-        FusionManager.Instance.ConnectToSession(sessionNameText.text);
+        STestFusionManager.Instance.ConnectToSession(sessionNameText.text);
         panel.SetActive(false);
     }
 
