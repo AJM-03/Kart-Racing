@@ -19,6 +19,6 @@ public class STestHatPicker : MonoBehaviour
     {
         int hatIndex = STestHats.hats.IndexOf(this.gameObject);
 
-        PlayerStats.Instance.hatIndex = hatIndex;
+        STestPlayerStats.Instance.hatIndex = hatIndex;
     }
 }

@@ -120,7 +120,7 @@ public class STestFusionManager : MonoBehaviour, INetworkRunnerCallbacks
             {
                 GameObject entry = GameObject.Instantiate(sessionEntryPrefab, sessionListContent);
                 entry.transform.parent = sessionListContent;
-                SessionEntry script = entry.GetComponent<SessionEntry>();
+                STestSessionEntry script = entry.GetComponent<STestSessionEntry>();
                 script.sessionName.text = session.Name;
                 script.playerCount.text = session.PlayerCount + "/" + session.MaxPlayers;
                 script.sessionPassword = session.Properties.GetValueOrDefault("sessionKey").PropertyValue as string;

@@ -1025,7 +1025,7 @@ GameObject:
   - component: {fileID: 160359765109196801}
   - component: {fileID: 8647606416431388602}
   m_Layer: 8
-  m_Name: Player
+  m_Name: STestPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1324,7 +1324,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1624229696468239782}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40e2a542db679094e910b553f08c04a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 128de7ecb32b4f0499bbdceb1de3a941, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cameraLookAt: {fileID: 5005888849294084151}
@@ -1355,7 +1355,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1624229696468239782}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 796516b52c23cdf40aab0e82938b703b, type: 3}
+  m_Script: {fileID: 11500000, guid: 634c065e541ffdf40bea8af790a64ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _PlayerName:

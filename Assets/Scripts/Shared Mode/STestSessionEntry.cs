@@ -29,7 +29,7 @@ public class STestSessionEntry : MonoBehaviour
             STestFusionManager.Instance.ConnectToSession(sessionName.text);
         else
         {
-            SessionJoin.Instance.OpenJoinMenu(sessionName.text, sessionPassword);
+            STestSessionJoin.Instance.OpenJoinMenu(sessionName.text, sessionPassword);
         }
     }
 }

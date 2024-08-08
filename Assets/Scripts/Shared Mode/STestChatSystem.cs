@@ -37,7 +37,7 @@ public class STestChatSystem : NetworkBehaviour
             myChatDisplay = chatDisplayCanvas;
         }
 
-        thisPlayersName = transform.root.GetComponent<PlayerStats>().PlayerName.ToString();
+        thisPlayersName = transform.root.GetComponent<STestPlayerStats>().PlayerName.ToString();
     }
 
 

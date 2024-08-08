@@ -1579,8 +1579,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e785136f6e4db942b294244ccc9cdd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputField: {fileID: 360071010}
-  submitButton: {fileID: 1505064623}
 --- !u!114 &360071010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2083,7 +2081,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 442629404}
-  - component: {fileID: 442629403}
+  - component: {fileID: 442629405}
   m_Layer: 0
   m_Name: Fusion Manager
   m_TagString: Untagged
@@ -2091,27 +2089,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &442629403
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 442629402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4731b402c0d6a0041a35e501105d4202, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  networkRunner: {fileID: 0}
-  playerPrefab: {fileID: 4460852341322733916, guid: eca75277420b5774389d912779969b9f, type: 3}
-  playerName: 
-  sessionListCanvas: {fileID: 872078033}
-  refreshButton: {fileID: 1426944857}
-  sessionListContent: {fileID: 1619532256}
-  sessionEntryPrefab: {fileID: 1088940674948054316, guid: 94eeb7b7e90b41849985560fcd94c6be, type: 3}
-  sessionNameInput: {fileID: 0}
-  sessionPassword: {fileID: 0}
 --- !u!4 &442629404
 Transform:
   m_ObjectHideFlags: 0
@@ -2127,6 +2104,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &442629405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 442629402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bba93ed919e548f49ab5c0b90e7fefc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &485334966
 GameObject:
   m_ObjectHideFlags: 0
@@ -2976,7 +2965,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &835101089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3092,11 +3081,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67ae11cf98784a84cb5bc7e7472b5d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panel: {fileID: 171682004}
-  sessionSearchCanvas: {fileID: 872078033}
-  sessionNameText: {fileID: 906456394}
-  passwordInput: {fileID: 2083027785}
-  joinSessionButton: {fileID: 267675387}
 --- !u!114 &870196839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4917,7 +4901,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 442629403}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FusionManager, Assembly-CSharp
         m_MethodName: RefreshSessionListUI
         m_Mode: 1
@@ -6474,14 +6458,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c1bedbaa8ea2f349a68f82389cace29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvas: {fileID: 1825300073}
-  sessionSearchCanvas: {fileID: 872078033}
-  sessionNameInput: {fileID: 813377356}
-  passwordInput: {fileID: 303616033}
-  sessionPrivacyText: {fileID: 84969071}
-  playerCountSlider: {fileID: 305117751}
-  playerCountText: {fileID: 179389326}
-  createSessionButton: {fileID: 1040599595}
 --- !u!114 &1825300075
 MonoBehaviour:
   m_ObjectHideFlags: 0
