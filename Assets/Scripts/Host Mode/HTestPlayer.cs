@@ -4,6 +4,11 @@ using UnityEngine;
 public class HTestPlayer : NetworkBehaviour
 {
     private NetworkCharacterController characterController;
+    [SerializeField] private HTestBullet bulletPrefab;
+
+    private Vector3 forward = Vector3.forward;
+
+    [Networked] private TickTimer delay { get; set; }
 
     private void Awake()
     {
@@ -14,8 +19,23 @@ public class HTestPlayer : NetworkBehaviour
     {
         if (GetInput(out HTestNetworkInputData data))
         {
-            data.direction.Normalize();
+            // Movement
+            data.direction.Normalize();  // Prevents cheating with impossible inputs
             characterController.Move(10 * data.direction * Runner.DeltaTime);
+
+
+            // Bullet
+            if (data.direction.sqrMagnitude > 0 )
+                forward = data.direction;  // Get the direction of movement
+
+            if (HasStateAuthority && delay.ExpiredOrNotRunning(Runner))
+            {
+                if (data.buttons.IsSet(HTestNetworkInputData.MouseButton0))
+                {
+                    Runner.Spawn(bulletPrefab, transform.position + forward, Quaternion.LookRotation(forward), Object.InputAuthority,
+                    (Runner, O) => { Object.GetComponent<HTestBullet>().Init(); } );
+                }
+            }
         }
     }
 }

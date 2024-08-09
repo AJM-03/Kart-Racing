@@ -45,6 +45,12 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    private bool _mouseButton0;
+    private void Update()
+    {
+        _mouseButton0 = _mouseButton0 | Input.GetMouseButtonDown(0);
+    }
+
     public void OnConnectedToServer(NetworkRunner runner)
     {
         
@@ -86,6 +92,10 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (Input.GetKey(KeyCode.A)) data.direction += Vector3.left;
 
         if (Input.GetKey(KeyCode.D)) data.direction += Vector3.right;
+
+        // Add Structure
+        data.buttons.Set(HTestNetworkInputData.MouseButton0, _mouseButton0);
+        _mouseButton0 = false;
 
         input.Set(data);  // Pass data to the host
     }
