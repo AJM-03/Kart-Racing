@@ -5,6 +5,7 @@ public class HTestPlayer : NetworkBehaviour
 {
     private NetworkCharacterController characterController;
     [SerializeField] private HTestBullet bulletPrefab;
+    [SerializeField] private HTestPhysicsBullet physicsBulletPrefab;
 
     private Vector3 forward = Vector3.forward;
 
@@ -33,7 +34,13 @@ public class HTestPlayer : NetworkBehaviour
                 if (data.buttons.IsSet(HTestNetworkInputData.MouseButton0))
                 {
                     Runner.Spawn(bulletPrefab, transform.position + forward, Quaternion.LookRotation(forward), Object.InputAuthority,
-                    (Runner, O) => { Object.GetComponent<HTestBullet>().Init(); } );
+                    (Runner, O) => { O.GetComponent<HTestBullet>().Init(); } );
+                }
+
+                else if (data.buttons.IsSet(HTestNetworkInputData.MouseButton1))
+                {
+                    Runner.Spawn(physicsBulletPrefab, transform.position + forward, Quaternion.LookRotation(forward), Object.InputAuthority,
+                    (Runner, O) => { O.GetComponent<HTestPhysicsBullet>().Init(10 * forward); });
                 }
             }
         }

@@ -1,25 +1,21 @@
 using Fusion;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class HTestBullet : NetworkBehaviour
+public class HTestPhysicsBullet : NetworkBehaviour
 {
     [Networked] private TickTimer lifetime { get; set; }
 
-    public void Init()
+    public void Init(Vector3 forward)
     {
         lifetime = TickTimer.CreateFromSeconds(Runner, 5f);
+        GetComponent<Rigidbody>().velocity = forward;
     }
 
     public override void FixedUpdateNetwork()
     {
-        transform.position += 5 * transform.forward * Runner.DeltaTime;
-        
         if (lifetime.Expired(Runner))
         {
             Runner.Despawn(Object);
-        }    
+        }
     }
 }
