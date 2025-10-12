@@ -90,7 +90,7 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (networkRunner == null)
         {
             networkRunner = gameObject.AddComponent<NetworkRunner>();
-            gameObject.AddComponent<RunnerSimulatePhysics3D>().ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateForward; ;
+            gameObject.AddComponent<RunnerSimulatePhysics3D>();
             networkRunner.ProvideInput = true;
         }
 
