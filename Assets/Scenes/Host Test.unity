@@ -8176,9 +8176,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1849718935133275488, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
+      propertyPath: Flags
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1849718935133275488, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
       propertyPath: SortKey
       value: 3261349337
       objectReference: {fileID: 0}
+    - target: {fileID: 1849718935133275488, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
+      propertyPath: ObjectInterest
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1849718935133275488, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
+      propertyPath: NetworkedBehaviours.Array.data[0]
+      value: 
+      objectReference: {fileID: 4221448625585837173}
     - target: {fileID: 3420572883635467966, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
       propertyPath: m_Name
       value: Physics Bullet
@@ -8232,6 +8244,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
+--- !u!114 &4221448625585837173 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7178007254414939530, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
+  m_PrefabInstance: {fileID: 4221448625585837172}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a591d221a634417e9827eb58e17de84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8345070700268369567
 PrefabInstance:
   m_ObjectHideFlags: 0

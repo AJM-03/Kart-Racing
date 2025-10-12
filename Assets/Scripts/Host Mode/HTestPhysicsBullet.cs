@@ -11,6 +11,12 @@ public class HTestPhysicsBullet : NetworkBehaviour
         GetComponent<Rigidbody>().velocity = forward;
     }
 
+    public override void Spawned()
+    {
+        Runner.SetIsSimulated(gameObject.GetComponent<NetworkObject>(), true);
+        base.Spawned();
+    }
+
     public override void FixedUpdateNetwork()
     {
         if (lifetime.Expired(Runner))

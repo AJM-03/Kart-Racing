@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4550454638065499270}
   - component: {fileID: 2413589522058641782}
-  - component: {fileID: 7165490408075917163}
+  - component: {fileID: 7178007254414939530}
   - component: {fileID: 1849718935133275488}
   - component: {fileID: 6522999676563428273}
   - component: {fileID: -2910658161662198702}
@@ -64,7 +64,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7165490408075917163
+--- !u!114 &7178007254414939530
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -76,6 +76,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a591d221a634417e9827eb58e17de84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 0
   SyncScale: 0
   SyncParent: 1
   _interpolationTarget: {fileID: 6512686267386701249}
@@ -103,8 +104,9 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 7165490408075917163}
+  - {fileID: 7178007254414939530}
   - {fileID: -2910658161662198702}
+  ForceRemoteRenderTimeframe: 0
 --- !u!135 &6522999676563428273
 SphereCollider:
   m_ObjectHideFlags: 0

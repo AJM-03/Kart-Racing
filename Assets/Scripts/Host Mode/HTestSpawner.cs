@@ -11,6 +11,7 @@ using UnityEngine.UI;
 public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner networkRunner;
+    private RunnerSimulatePhysics3D simulatePhysics3D;
     [SerializeField] private NetworkPrefabRef playerPrefabRef;
 
     private Dictionary<PlayerRef, NetworkObject> spawnCharacter = new Dictionary<PlayerRef, NetworkObject> ();
@@ -61,10 +62,14 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (networkRunner == null)
         {
             networkRunner = gameObject.AddComponent<NetworkRunner>();
-            gameObject.AddComponent<RunnerSimulatePhysics3D>();
-            networkRunner.ProvideInput = true;
         }
 
+        networkRunner.ProvideInput = true;
+
+        if (simulatePhysics3D == null)
+        {
+            gameObject.AddComponent<RunnerSimulatePhysics3D>().ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateForward;
+        }
 
         // Get scene info
         var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
@@ -90,8 +95,13 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (networkRunner == null)
         {
             networkRunner = gameObject.AddComponent<NetworkRunner>();
-            gameObject.AddComponent<RunnerSimulatePhysics3D>();
-            networkRunner.ProvideInput = true;
+        }
+
+        networkRunner.ProvideInput = true;
+
+        if (simulatePhysics3D == null)
+        {
+            gameObject.AddComponent<RunnerSimulatePhysics3D>().ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateForward;
         }
 
 
@@ -146,7 +156,7 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
             if (session.IsVisible)
             {
                 GameObject entry = GameObject.Instantiate(sessionEntryPrefab, sessionListContent);
-                entry.transform.parent = sessionListContent;
+                entry.transform.SetParent(sessionListContent, false);
                 HTestSessionEntry script = entry.GetComponent<HTestSessionEntry>();
                 script.sessionName.text = session.Name;
                 script.playerCount.text = session.PlayerCount + "/" + session.MaxPlayers;
@@ -219,7 +229,7 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log("Player Joined");
+        Debug.Log("Player " + player.PlayerId + " Joined");
 
         if (runner.IsServer)
         {
