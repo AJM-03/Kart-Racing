@@ -218,5 +218,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1dd606d31deab7428b2aa1dc2e1e991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 1861750309558883043, guid: 364f33ae625e0b44993cb1010a789575, type: 3}
-  physicsBulletPrefab: {fileID: -2910658161662198702, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
+  bulletPrefab: {fileID: 85729569608210355, guid: 364f33ae625e0b44993cb1010a789575, type: 3}
+  physicsBulletPrefab: {fileID: 3420572883635467966, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}

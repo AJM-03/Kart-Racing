@@ -19,6 +19,7 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     [HideInInspector] public string playerName;
 
+
     [Header("Session List")]
     private List<SessionInfo> sessions = new List<SessionInfo>();
     public GameObject sessionListCanvas;
@@ -34,6 +35,7 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
     private void Awake()
     {
         if (Instance == null) { Instance = this; }
+        gameObject.AddComponent(typeof(HTestInputProvider));
     }
 
     public void ConnectToLobby(string _playerName)  // Open the session list
@@ -59,7 +61,7 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (networkRunner == null)
         {
             networkRunner = gameObject.AddComponent<NetworkRunner>();
-            gameObject.AddComponent<RunnerSimulatePhysics3D>().ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateForward; ;
+            gameObject.AddComponent<RunnerSimulatePhysics3D>();
             networkRunner.ProvideInput = true;
         }
 
@@ -169,14 +171,6 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
         Debug.Log("Connected to server");
     }
 
-    private bool _mouseButton0;
-    private bool _mouseButton1;
-
-    private void Update()
-    {
-        _mouseButton0 = _mouseButton0 | Input.GetMouseButtonDown(0);
-        _mouseButton1 = _mouseButton1 | Input.GetMouseButtonDown(1);
-    }
 
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
@@ -205,24 +199,7 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        var data = new HTestNetworkInputData();
 
-        if (Input.GetKey(KeyCode.W)) data.direction += Vector3.forward;
-
-        if (Input.GetKey(KeyCode.S)) data.direction += Vector3.back;
-
-        if (Input.GetKey(KeyCode.A)) data.direction += Vector3.left;
-
-        if (Input.GetKey(KeyCode.D)) data.direction += Vector3.right;
-
-        // Add Structure & Host
-        data.buttons.Set(HTestNetworkInputData.MouseButton0, _mouseButton0);
-        _mouseButton0 = false;
-
-        data.buttons.Set(HTestNetworkInputData.MouseButton1, _mouseButton1);
-        _mouseButton1 = false;
-
-        input.Set(data);  // Pass data to the host
     }
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
