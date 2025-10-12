@@ -1023,9 +1023,10 @@ GameObject:
   - component: {fileID: 3401534223944442990}
   - component: {fileID: 4265177296235682147}
   - component: {fileID: 160359765109196801}
-  - component: {fileID: 8647606416431388602}
+  - component: {fileID: -4065494798030866648}
+  - component: {fileID: 7889867766623009445}
   m_Layer: 8
-  m_Name: STestPlayer
+  m_Name: HTestPlayer 1
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1045,6 +1046,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5005888849294084151}
+  - {fileID: 357373655236039258}
   - {fileID: 5790358079410570034}
   - {fileID: 4290153829774650101}
   - {fileID: 3279890012810746804}
@@ -1294,7 +1296,7 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 2515755707
+  SortKey: 3421054609
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
@@ -1302,7 +1304,8 @@ MonoBehaviour:
   - {fileID: 203358892162011154}
   - {fileID: 3401534223944442990}
   - {fileID: 160359765109196801}
-  - {fileID: 8647606416431388602}
+  - {fileID: -4065494798030866648}
+  - {fileID: 7889867766623009445}
   - {fileID: 5947170478406688302}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &3401534223944442990
@@ -1353,7 +1356,7 @@ MonoBehaviour:
   StateHashes: 0000000084ca1cc0f9c6230b1c6a54339e2518b671a7e1076b36dbedb1afdc305a6c54cd
   TriggerHashes: 00000000
   TotalWords: 5
---- !u!114 &8647606416431388602
+--- !u!114 &-4065494798030866648
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1362,7 +1365,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1624229696468239782}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 634c065e541ffdf40bea8af790a64ddc, type: 3}
+  m_Script: {fileID: 11500000, guid: 10e36c3f1484c7c4ba4cca5c81761263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _PlayerName:
@@ -1374,6 +1377,21 @@ MonoBehaviour:
   playerNameLabel: {fileID: 1828288023014045921}
   playerHead: {fileID: 8453449737069564373}
   healthBar: {fileID: 1604304418081827794}
+--- !u!114 &7889867766623009445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1624229696468239782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1dd606d31deab7428b2aa1dc2e1e991, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 85729569608210355, guid: 364f33ae625e0b44993cb1010a789575, type: 3}
+  physicsBulletPrefab: {fileID: 3420572883635467966, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
+  shootPos: {fileID: 357373655236039258}
 --- !u!1 &1893006817693786509
 GameObject:
   m_ObjectHideFlags: 0
@@ -2858,6 +2876,37 @@ Transform:
   - {fileID: 1019692232906118849}
   m_Father: {fileID: 5360559825401783585}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5718491906773162510
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 357373655236039258}
+  m_Layer: 0
+  m_Name: ShootPos
+  m_TagString: CinemachineTarget
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &357373655236039258
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5718491906773162510}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.375, z: 0.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 571944820553182769}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5767007403387404330
 GameObject:
   m_ObjectHideFlags: 0
@@ -3312,7 +3361,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8647606416431388602}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayerStats, Assembly-CSharp
         m_MethodName: HurtMe
         m_Mode: 1

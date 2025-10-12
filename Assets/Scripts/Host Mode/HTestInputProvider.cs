@@ -40,7 +40,12 @@ public class HTestInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
         var playerActions = _playerActionMap.Movement;
 
         inputData.direction.Set(playerActions.Move.ReadValue<Vector2>().x, 0, playerActions.Move.ReadValue<Vector2>().y);
+        inputData.look.Set(playerActions.Look.ReadValue<Vector2>().x, 0, playerActions.Look.ReadValue<Vector2>().y);
 
+        if (playerActions.Jump.IsPressed())
+            inputData.buttons.Set(MyButtons.Jump, true);
+        if (playerActions.Sprint.IsPressed())
+            inputData.buttons.Set(MyButtons.Sprint, true);
         if (playerActions.Ball.IsPressed())
             inputData.buttons.Set(MyButtons.Ball, true);
         if (playerActions.PhysicsBall.IsPressed())

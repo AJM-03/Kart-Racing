@@ -2438,7 +2438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefabRef:
-    RawGuidValue: ec29260ff6293464b92b3539c2228251
+    RawGuidValue: 856a595322652e34e81aff041a7e68cf
   playerName: 
   sessionListCanvas: {fileID: 1928934432}
   refreshButton: {fileID: 49137533}

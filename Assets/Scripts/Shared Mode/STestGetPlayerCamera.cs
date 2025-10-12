@@ -13,7 +13,7 @@ public class STestGetPlayerCamera : MonoBehaviour
     {
         NetworkObject thisObject = GetComponent<NetworkObject>();
 
-        if (thisObject.HasStateAuthority)
+        if (thisObject.HasInputAuthority)
         {
             GameObject virtualCamera = GameObject.Find("PlayerFollowCamera");
             virtualCamera.GetComponent<CinemachineVirtualCamera>().Follow = cameraLookAt;

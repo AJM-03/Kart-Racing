@@ -36,8 +36,13 @@ public class STestChatSystem : NetworkBehaviour
             myChatBody = chatBody;
             myChatDisplay = chatDisplayCanvas;
         }
+    }
 
-        thisPlayersName = transform.root.GetComponent<STestPlayerStats>().PlayerName.ToString();
+    public override void Spawned()
+    {
+        thisPlayersName = transform.root.GetComponent<HTestPlayerStats>().PlayerName.ToString();
+
+        base.Spawned();
     }
 
 
