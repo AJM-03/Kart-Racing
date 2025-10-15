@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using System;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
@@ -76,6 +77,7 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
+
         // cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -100,6 +102,13 @@ namespace StarterAssets
         private int _animIDMotionSpeed;
 
 
+        [Networked] private float _animSpeed { get; set; }
+        [Networked] private bool _animGrounded { get; set; }
+        [Networked] private bool _animJump { get; set; }
+        [Networked] private bool _animFreeFall { get; set; }
+        [Networked] private float _animMotionSpeed { get; set; }
+
+
         private Animator _animator;
         private CharacterController _controller;
         private GameObject _mainCamera;
@@ -122,7 +131,7 @@ namespace StarterAssets
             // get a reference to our main camera
             if (_mainCamera == null)
             {
-                _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+                _mainCamera = transform.GetChild(0).gameObject;
             }
         }
 
@@ -140,17 +149,31 @@ namespace StarterAssets
             _fallTimeoutDelta = FallTimeout;
         }
 
+        private void Update()
+        {
+            _hasAnimator = TryGetComponent(out _animator);          
+        }
+
         public override void FixedUpdateNetwork()
         {
-            _hasAnimator = TryGetComponent(out _animator);
+            if (HasStateAuthority)
+            {
+                JumpAndGravity();
+                GroundedCheck();
+                Move();
 
-            JumpAndGravity();
-            GroundedCheck();
-            Move();
-
-            moveInput = Vector2.zero;
-            jumpInput = false;
-            sprintInput = false;
+                moveInput = Vector2.zero;
+                jumpInput = false;
+                sprintInput = false;
+            }
+            if (_hasAnimator && (HasInputAuthority || HasStateAuthority))
+            {
+                _animator.SetFloat(_animIDSpeed, _animSpeed);
+                _animator.SetFloat(_animIDMotionSpeed, _animMotionSpeed);
+                _animator.SetBool(_animIDGrounded, _animGrounded);
+                _animator.SetBool(_animIDJump, _animJump);
+                _animator.SetBool(_animIDFreeFall, _animFreeFall);
+            }
         }
 
         private void LateUpdate()
@@ -180,7 +203,7 @@ namespace StarterAssets
             // update animator if using character
             if (_hasAnimator)
             {
-                _animator.SetBool(_animIDGrounded, Grounded);
+                _animGrounded = Grounded;
             }
         }
 
@@ -268,8 +291,8 @@ namespace StarterAssets
             // update animator if using character
             if (_hasAnimator)
             {
-                _animator.SetFloat(_animIDSpeed, _animationBlend);
-                _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+                _animSpeed = _animationBlend;
+                _animMotionSpeed = inputMagnitude;
             }
         }
 
@@ -283,8 +306,8 @@ namespace StarterAssets
                 // update animator if using character
                 if (_hasAnimator)
                 {
-                    _animator.SetBool(_animIDJump, false);
-                    _animator.SetBool(_animIDFreeFall, false);
+                    _animJump = false;
+                    _animFreeFall = false;
                 }
 
                 // stop our velocity dropping infinitely when grounded
@@ -302,7 +325,7 @@ namespace StarterAssets
                     // update animator if using character
                     if (_hasAnimator)
                     {
-                        _animator.SetBool(_animIDJump, true);
+                        _animJump = true;
                     }
                 }
 
@@ -327,7 +350,7 @@ namespace StarterAssets
                     // update animator if using character
                     if (_hasAnimator)
                     {
-                        _animator.SetBool(_animIDFreeFall, true);
+                        _animFreeFall = true;
                     }
                 }
 
@@ -369,8 +392,9 @@ namespace StarterAssets
             {
                 if (FootstepAudioClips.Length > 0)
                 {
-                    var index = Random.Range(0, FootstepAudioClips.Length);
-                    AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(_controller.center), FootstepAudioVolume);
+                    var index = UnityEngine.Random.Range(0, FootstepAudioClips.Length);
+                    if (FootstepAudioClips[index] != null && _controller != null && _controller.center != null)
+                        AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(_controller.center), FootstepAudioVolume);
                 }
             }
         }
@@ -379,7 +403,8 @@ namespace StarterAssets
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
-                AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+                if (LandingAudioClip != null && _controller != null && _controller.center != null)
+                    AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
         }
     }

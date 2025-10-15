@@ -17,7 +17,10 @@ public class STestGetPlayerCamera : MonoBehaviour
         {
             GameObject virtualCamera = GameObject.Find("PlayerFollowCamera");
             virtualCamera.GetComponent<CinemachineVirtualCamera>().Follow = cameraLookAt;
+        }
 
+        if (thisObject.HasInputAuthority || thisObject.HasStateAuthority)
+        {
             GetComponent<ThirdPersonController>().enabled = true;
         }
     }

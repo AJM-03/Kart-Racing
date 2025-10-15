@@ -8,14 +8,10 @@ public class STestHats : MonoBehaviour
 
     private void Awake()
     {
-        foreach(Transform child in transform)
+        foreach(Transform a in transform)
         {
-            hats.Add(child.gameObject);
-        }
-
-        foreach(GameObject hat in hats)
-        {
-            hat.AddComponent<STestHatPicker>();
+            hats.Add(a.gameObject);
+            a.gameObject.AddComponent<STestHatPicker>();
         }
     }
 }
