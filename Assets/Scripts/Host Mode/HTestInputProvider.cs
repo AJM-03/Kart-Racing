@@ -50,6 +50,9 @@ public class HTestInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
             inputData.buttons.Set(MyButtons.Ball, true);
         if (playerActions.PhysicsBall.IsPressed())
             inputData.buttons.Set(MyButtons.PhysBall, true);
+
+        if (HTestPlayerStats.localPlayer)
+            inputData.hatIndex = HTestPlayerStats.localPlayer.localHatIndex;
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)

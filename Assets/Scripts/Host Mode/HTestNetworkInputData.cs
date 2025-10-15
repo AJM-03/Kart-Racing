@@ -16,5 +16,6 @@ public struct HTestNetworkInputData : INetworkInput
 {
     public Vector3 direction;
     public Vector3 look;
+    public int hatIndex;
     public NetworkButtons buttons;
 }

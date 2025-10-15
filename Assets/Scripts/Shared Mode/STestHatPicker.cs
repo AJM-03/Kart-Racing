@@ -6,7 +6,6 @@ public class STestHatPicker : MonoBehaviour
 {
     public void OnMouseOver()
     {
-        Debug.Log(this.gameObject.name);
         transform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
     }
 
@@ -17,8 +16,8 @@ public class STestHatPicker : MonoBehaviour
 
     public void OnMouseDown()
     {
-        int hatIndex = STestHats.hats.IndexOf(this.gameObject);
+        int hatIndex = STestHats.hats.IndexOf(this.gameObject) + 1;
 
-        STestPlayerStats.Instance.hatIndex = hatIndex;
+        HTestPlayerStats.localPlayer.localHatIndex = hatIndex;
     }
 }
