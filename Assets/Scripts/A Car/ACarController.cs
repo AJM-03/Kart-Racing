@@ -29,6 +29,9 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float acceleration = 25f;
     [SerializeField] private float maxSpeed = 100f;
     [SerializeField] private float deceleration = 10f;
+    [SerializeField] private float steerStrength = 15f;
+    [SerializeField] private AnimationCurve turningCurve;  // Dynamically change turning strength based on the car's velocity
+    [SerializeField] private float dragCoefficient = 1f;  // Side force preventing the car from sliding
 
     private Vector3 currentCarLocalVelocity = Vector3.zero;
     private float carVelocityRatio = 0;  // Current speed in comparison to top speed
@@ -91,6 +94,8 @@ public class ACarController : MonoBehaviour
         {
             Acceleration();
             Deceleration();
+            Turn();
+            SidewaysDrag();
         }
     }
 
@@ -102,6 +107,22 @@ public class ACarController : MonoBehaviour
     private void Deceleration()
     {
         rb.AddForceAtPosition(deceleration * moveInput * -transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+    }
+
+    private void Turn()
+    {
+        rb.AddTorque(steerStrength * steerInput * turningCurve.Evaluate(carVelocityRatio) * Mathf.Sign(carVelocityRatio) * transform.up, ForceMode.Acceleration);
+    }
+
+    private void SidewaysDrag()
+    {
+        float currentSidewaysSpeed = currentCarLocalVelocity.x;
+
+        float dragMagnitude = -currentSidewaysSpeed * dragCoefficient;
+
+        Vector3 dragForce = transform.right * dragMagnitude;
+
+        rb.AddForceAtPosition(dragForce, rb.worldCenterOfMass, ForceMode.Acceleration);
     }
     #endregion
 
