@@ -7,6 +7,7 @@ public class ACarController : MonoBehaviour
     [Header("References")]
     private Rigidbody rb;
     [SerializeField] private Transform[] rayPoints;
+    [SerializeField] private Transform accelerationPoint;
     [SerializeField] private LayerMask driveableLayer;
 
     [Header("Suspension Settings")]
@@ -16,6 +17,22 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float springTravel;  // Max distance a spring can compress or extend from it's rest position
     [SerializeField] private float wheelRadius;
 
+    [Header("Car Status")]
+    private int[] groundedWheels = new int[4];
+    private bool isGrounded = false;
+
+    [Header("Input")]
+    private float moveInput = 0;
+    private float steerInput = 0;
+
+    [Header("Car Settings")]
+    [SerializeField] private float acceleration = 25f;
+    [SerializeField] private float maxSpeed = 100f;
+    [SerializeField] private float deceleration = 10f;
+
+    private Vector3 currentCarLocalVelocity = Vector3.zero;
+    private float carVelocityRatio = 0;  // Current speed in comparison to top speed
+
     [Header("Debug")]
     [SerializeField] private bool wheelRays = true;
 
@@ -24,38 +41,103 @@ public class ACarController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
+    private void Update()
+    {
+        GetPlayerInput();
+    }
+
     private void FixedUpdate()
     {
         Suspension();
+        GroundCheck();
+        CalculateCarVelocity();
+        Movement();
     }
 
+    #region Car Status Check
+    private void GroundCheck()
+    {
+        int tempGroundedWheels = 0;
+        for(int i = 0; i < groundedWheels.Length; i++)
+        {
+            tempGroundedWheels += groundedWheels[i];  // If wheel is grounded add one
+        }
+
+        if (tempGroundedWheels > 1)
+            isGrounded = true;
+        else
+            isGrounded = false;
+    }
+
+    private void CalculateCarVelocity()
+    {
+        currentCarLocalVelocity = transform.InverseTransformDirection(rb.velocity);
+        carVelocityRatio = currentCarLocalVelocity.z / maxSpeed;
+    }
+    #endregion
+
+    #region Input Handling
+    private void GetPlayerInput()
+    {
+        moveInput = Input.GetAxis("Vertical");
+        steerInput = Input.GetAxis("Horizontal");
+    }
+    #endregion
+
+    #region Movement
+    private void Movement()
+    {
+        if (isGrounded)
+        {
+            Acceleration();
+            Deceleration();
+        }
+    }
+
+    private void Acceleration()
+    {
+        rb.AddForceAtPosition(acceleration * moveInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+    }
+
+    private void Deceleration()
+    {
+        rb.AddForceAtPosition(deceleration * moveInput * -transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+    }
+    #endregion
+
+    #region Suspension
     private void Suspension()
     {
-        foreach(Transform rayPoint in rayPoints)
+        for(int i = 0; i < rayPoints.Length; i++)
         {
             RaycastHit hit;
             float maxLength = restLength + springTravel;
 
-            if (Physics.Raycast(rayPoint.position, -rayPoint.up, out hit, maxLength + wheelRadius, driveableLayer))
+            if (Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, maxLength + wheelRadius, driveableLayer))
             {
+                groundedWheels[i] = 1;
+
                 float currentSpringLength = hit.distance - wheelRadius;
                 float springCompression = (restLength - currentSpringLength) / springTravel;  // How much the spring is compressed in a normalized format
 
-                float springVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoint.position), rayPoint.up);
+                float springVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoints[i].position), rayPoints[i].up);
                 float dampForce = damperStiffness * springVelocity;
 
                 float springForce = springStiffness * springCompression;
 
                 float netForce = springForce - dampForce;
 
-                rb.AddForceAtPosition(netForce * rayPoint.up, rayPoint.position);
+                rb.AddForceAtPosition(netForce * rayPoints[i].up, rayPoints[i].position);
 
-                if (wheelRays) Debug.DrawLine(rayPoint.position, hit.point, Color.red);
+                if (wheelRays) Debug.DrawLine(rayPoints[i].position, hit.point, Color.red);
             }
             else
             {
-                if (wheelRays) Debug.DrawLine(rayPoint.position,rayPoint.position + (wheelRadius + maxLength) * -rayPoint.up, Color.green);
+                groundedWheels[i] = 0;
+
+                if (wheelRays) Debug.DrawLine(rayPoints[i].position, rayPoints[i].position + (wheelRadius + maxLength) * -rayPoints[i].up, Color.green);
             }
         }
     }
+    #endregion
 }
