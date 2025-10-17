@@ -53,6 +53,11 @@ public class HTestInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
         if (HTestPlayerStats.localPlayer)
             inputData.hatIndex = HTestPlayerStats.localPlayer.localHatIndex;
+
+        if (playerActions.Quit.IsPressed())
+        {
+            Runner.Shutdown();
+        }
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)

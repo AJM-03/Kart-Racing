@@ -80,6 +80,15 @@ public partial class @TestControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Quit"",
+                    ""type"": ""Button"",
+                    ""id"": ""99428984-910f-40bb-86b7-019e4e29143d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -225,6 +234,28 @@ public partial class @TestControls: IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c43c758d-da3b-442b-ad00-2d434d54d8c4"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Quit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""88ebd31f-1ce1-4ec5-8513-1d512bc19f7b"",
+                    ""path"": ""<Keyboard>/backquote"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Quit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -251,6 +282,7 @@ public partial class @TestControls: IInputActionCollection2, IDisposable
         m_Movement_PhysicsBall = m_Movement.FindAction("Physics Ball", throwIfNotFound: true);
         m_Movement_Look = m_Movement.FindAction("Look", throwIfNotFound: true);
         m_Movement_Sprint = m_Movement.FindAction("Sprint", throwIfNotFound: true);
+        m_Movement_Quit = m_Movement.FindAction("Quit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -318,6 +350,7 @@ public partial class @TestControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Movement_PhysicsBall;
     private readonly InputAction m_Movement_Look;
     private readonly InputAction m_Movement_Sprint;
+    private readonly InputAction m_Movement_Quit;
     public struct MovementActions
     {
         private @TestControls m_Wrapper;
@@ -328,6 +361,7 @@ public partial class @TestControls: IInputActionCollection2, IDisposable
         public InputAction @PhysicsBall => m_Wrapper.m_Movement_PhysicsBall;
         public InputAction @Look => m_Wrapper.m_Movement_Look;
         public InputAction @Sprint => m_Wrapper.m_Movement_Sprint;
+        public InputAction @Quit => m_Wrapper.m_Movement_Quit;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -355,6 +389,9 @@ public partial class @TestControls: IInputActionCollection2, IDisposable
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
+            @Quit.started += instance.OnQuit;
+            @Quit.performed += instance.OnQuit;
+            @Quit.canceled += instance.OnQuit;
         }
 
         private void UnregisterCallbacks(IMovementActions instance)
@@ -377,6 +414,9 @@ public partial class @TestControls: IInputActionCollection2, IDisposable
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
+            @Quit.started -= instance.OnQuit;
+            @Quit.performed -= instance.OnQuit;
+            @Quit.canceled -= instance.OnQuit;
         }
 
         public void RemoveCallbacks(IMovementActions instance)
@@ -411,5 +451,6 @@ public partial class @TestControls: IInputActionCollection2, IDisposable
         void OnPhysicsBall(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+        void OnQuit(InputAction.CallbackContext context);
     }
 }

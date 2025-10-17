@@ -146,9 +146,12 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void RefreshSessionListUI()
     {
-        foreach (Transform child in sessionListContent)
+        if (sessionListContent != null)
         {
-            Destroy(child.gameObject);
+            foreach (Transform child in sessionListContent)
+            {
+                Destroy(child.gameObject);
+            }
         }
 
         foreach (SessionInfo session in sessions)
@@ -199,7 +202,8 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
     {
-        
+        Debug.LogError("Disconnected from server");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
@@ -274,7 +278,7 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
