@@ -10,6 +10,7 @@ public class ACarController : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] private Transform[] rayPoints;
     [SerializeField] private Transform accelerationPoint;
+    [SerializeField] private Transform carModel;
     [SerializeField] private GameObject[] tires = new GameObject[4];
     [SerializeField] private GameObject[] frontTireParents = new GameObject[2];
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
@@ -57,6 +58,8 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float tireRotSpeed = 3000f;
     [SerializeField] private float maxTireSteeringAngle = 30f;
     [SerializeField] private float minSideSkidVelocity = 10f;
+    [SerializeField, Range(0, 120)] private float maxDriftCarAngle = 30f;
+    private Vector3[] tirePositions = new Vector3[4];
     [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];
 
     [Header("Debug")]
@@ -67,6 +70,8 @@ public class ACarController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         SetCenterOfMass();
+
+        for (int i = 0; i < tires.Length; i++) tirePositions[i] = tires[i].transform.parent.localPosition;
     }
 
     private void Update()
@@ -124,7 +129,8 @@ public class ACarController : MonoBehaviour
     private void UpdateDebugStats()
     {
         DebugStats.moveInput = moveInput;
-        DebugStats.steerInput = steerInput;
+        if (isDrifting) DebugStats.steerInput = driftControl * driftDirection;
+        else DebugStats.steerInput = steerInput;
         DebugStats.braking = isBraking;
         DebugStats.currentCarLocalVelocity = currentCarLocalVelocity;
         DebugStats.carVelocityRatio = carVelocityRatio;
@@ -237,7 +243,7 @@ public class ACarController : MonoBehaviour
                 rb.AddForceAtPosition(netForce * rayPoints[i].up, rayPoints[i].position);
 
                 // Visuals
-                SetTirePosition(tires[i], hit.point + rayPoints[i].up * wheelRadius);
+                SetTirePosition(tires[i], hit.point + rayPoints[i].up * wheelRadius, i);
 
                 if (wheelRays) Debug.DrawLine(rayPoints[i].position, hit.point, Color.red);
             }
@@ -246,7 +252,7 @@ public class ACarController : MonoBehaviour
                 groundedWheels[i] = 0;
 
                 // Visuals
-                SetTirePosition(tires[i], rayPoints[i].position - rayPoints[i].up * maxDistance);
+                SetTirePosition(tires[i], rayPoints[i].position - rayPoints[i].up * maxDistance, i);
 
                 if (wheelRays) Debug.DrawLine(rayPoints[i].position, rayPoints[i].position + (wheelRadius + maxDistance) * -rayPoints[i].up, Color.green);
             }
@@ -259,9 +265,21 @@ public class ACarController : MonoBehaviour
     {
         TireVisuals();
         VFX();
+        TurnCarRotation();
 
         var orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
         if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = steerInput * 1;
+    }
+
+    private void TurnCarRotation()
+    {
+        if (!isGrounded) return;
+
+        float turnAmount = steerInput;
+        if (isDrifting) turnAmount = driftControl * driftDirection;
+        float y = Mathf.InverseLerp(0, brakeDriftSharpTurn, Mathf.Abs(turnAmount));
+        y = (y / 100) * (carVelocityRatio * 100);
+        carModel.localEulerAngles = new Vector3(0, Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput), 0); 
     }
 
     private void TireVisuals()
@@ -283,9 +301,10 @@ public class ACarController : MonoBehaviour
         }
     }
 
-    private void SetTirePosition(GameObject tire, Vector3 targetPosition)
+    private void SetTirePosition(GameObject tire, Vector3 targetPosition, int tireIndex)
     {
-        tire.transform.position = targetPosition;
+        tire.transform.parent.localPosition = new Vector3(tirePositions[tireIndex].x, 0, tirePositions[tireIndex].z);
+        tire.transform.position = new Vector3(tire.transform.parent.position.x, targetPosition.y, tire.transform.parent.position.z);
     }
 
     private void VFX()
