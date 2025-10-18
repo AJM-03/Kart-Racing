@@ -46,6 +46,7 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float dragCoefficient = 1f;  // Side force preventing the car from sliding
     [SerializeField] private float brakingDeceleration = 100f;
     [SerializeField] private float brakingDragCoefficient = 0.5f;
+    [SerializeField, Range(0f, 1f)] private float minVelocityRatioToDrift = 0.2f;
     [SerializeField, Range(1f, 3f)] private float driftSharpTurn = 2;
     [SerializeField, Range(0, 1.5f)] private float driftWideTurn = 0;
     [SerializeField, Range(1f, 3f)] private float brakeDriftSharpTurn = 2;
@@ -61,6 +62,7 @@ public class ACarController : MonoBehaviour
     [SerializeField, Range(0, 120)] private float maxDriftCarAngle = 30f;
     private Vector3[] tirePositions = new Vector3[4];
     [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];
+    [SerializeField, Range(0f, 1.5f)] private float cameraHeadingChange = 0.75f;
 
     [Header("Debug")]
     [SerializeField] private bool wheelRays = true;
@@ -186,13 +188,13 @@ public class ACarController : MonoBehaviour
 
     private void Drift()
     {
-        if (Input.GetButtonDown("Jump") && !isDrifting && steerInput != 0)
+        if (Input.GetButtonDown("Jump") && !isDrifting && steerInput != 0 && carVelocityRatio >= minVelocityRatioToDrift)
         {
             isDrifting = true;
             driftDirection = steerInput > 0 ? 1 : -1;
         }
 
-        if (Input.GetButtonUp("Jump") && isDrifting)
+        if ((Input.GetButtonUp("Jump") || carVelocityRatio < minVelocityRatioToDrift) && isDrifting)
         {
             isDrifting = false;
         }
@@ -268,7 +270,9 @@ public class ACarController : MonoBehaviour
         TurnCarRotation();
 
         var orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
-        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = steerInput * 1;
+        float turnAmount = steerInput;
+        if (isDrifting) turnAmount = driftControl * driftDirection;
+        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = turnAmount * cameraHeadingChange;
     }
 
     private void TurnCarRotation()
@@ -279,7 +283,7 @@ public class ACarController : MonoBehaviour
         if (isDrifting) turnAmount = driftControl * driftDirection;
         float y = Mathf.InverseLerp(0, brakeDriftSharpTurn, Mathf.Abs(turnAmount));
         y = (y / 100) * (carVelocityRatio * 100);
-        carModel.localEulerAngles = new Vector3(0, Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput), 0); 
+        carModel.localEulerAngles = new Vector3(0, Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput), Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput) / 3); 
     }
 
     private void TireVisuals()
@@ -304,7 +308,11 @@ public class ACarController : MonoBehaviour
     private void SetTirePosition(GameObject tire, Vector3 targetPosition, int tireIndex)
     {
         tire.transform.parent.localPosition = new Vector3(tirePositions[tireIndex].x, 0, tirePositions[tireIndex].z);
-        tire.transform.position = new Vector3(tire.transform.parent.position.x, targetPosition.y, tire.transform.parent.position.z);
+        float tireY = targetPosition.y;
+        if (isDrifting && driftDirection == 1 && tireIndex % 2 != 0) tireY = tire.transform.parent.position.y - restLength;
+        if (isDrifting && driftDirection == -1 && tireIndex % 2 == 0) tireY = tire.transform.parent.position.y - restLength;
+
+        tire.transform.position = new Vector3(tire.transform.parent.position.x, tireY, tire.transform.parent.position.z);
     }
 
     private void VFX()
