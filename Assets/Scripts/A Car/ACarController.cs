@@ -57,6 +57,7 @@ public class ACarController : MonoBehaviour
     private void Update()
     {
         GetPlayerInput();
+        UpdateDebugStats();
     }
 
     private void FixedUpdate()
@@ -99,6 +100,18 @@ public class ACarController : MonoBehaviour
             z += point.position.z;
         }
         rb.centerOfMass = new Vector3(x, -0.25f, z); // Lower the center of mass.
+    }
+
+    private void UpdateDebugStats()
+    {
+        DebugStats.moveInput = moveInput;
+        DebugStats.steerInput = steerInput;
+        DebugStats.currentCarLocalVelocity = currentCarLocalVelocity;
+        DebugStats.carVelocityRatio = carVelocityRatio;
+
+        int gW = 0;
+        for (int i = 0; i < groundedWheels.Length; i++) { gW += groundedWheels[i]; }
+        DebugStats.groundedWheels = gW;
     }
     #endregion
 
@@ -197,7 +210,7 @@ public class ACarController : MonoBehaviour
         TireVisuals();
 
         var orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
-        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = steerInput * 5;
+        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = steerInput * 1;
     }
 
     private void TireVisuals()
@@ -208,13 +221,13 @@ public class ACarController : MonoBehaviour
         {
             if (i < 2)  // Front tires
             {
-                tires[i].transform.Rotate(Vector3.up, tireRotSpeed * carVelocityRatio * Time.deltaTime, Space.Self);  // Front tires spin using velocity
+                tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * carVelocityRatio * Time.deltaTime, Space.Self);  // Front tires spin using velocity
 
                 frontTireParents[i].transform.localEulerAngles = new Vector3(frontTireParents[i].transform.localEulerAngles.x, steeringAngle, frontTireParents[i].transform.localEulerAngles.z);
             }
             else  // Rear tires
             {
-                tires[i].transform.Rotate(Vector3.up, tireRotSpeed * moveInput * Time.deltaTime, Space.Self);  // Rear tires spin using acceleration
+                tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * moveInput * Time.deltaTime, Space.Self);  // Rear tires spin using acceleration
             }
         }
     }
