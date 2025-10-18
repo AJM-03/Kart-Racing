@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,9 @@ public class ACarController : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] private Transform[] rayPoints;
     [SerializeField] private Transform accelerationPoint;
+    [SerializeField] private GameObject[] tires = new GameObject[4];
+    [SerializeField] private GameObject[] frontTireParents = new GameObject[2];
+    [SerializeField] private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private LayerMask driveableLayer;
 
     [Header("Suspension Settings")]
@@ -36,12 +40,18 @@ public class ACarController : MonoBehaviour
     private Vector3 currentCarLocalVelocity = Vector3.zero;
     private float carVelocityRatio = 0;  // Current speed in comparison to top speed
 
+    [Header("Visuals")]
+    [SerializeField] private float tireRotSpeed = 3000f;
+    [SerializeField] private float maxTireSteeringAngle = 30f;
+
     [Header("Debug")]
     [SerializeField] private bool wheelRays = true;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        SetCenterOfMass();
     }
 
     private void Update()
@@ -55,9 +65,10 @@ public class ACarController : MonoBehaviour
         GroundCheck();
         CalculateCarVelocity();
         Movement();
+        Visuals();
     }
 
-    #region Car Status Check
+    #region Car Status
     private void GroundCheck()
     {
         int tempGroundedWheels = 0;
@@ -76,6 +87,18 @@ public class ACarController : MonoBehaviour
     {
         currentCarLocalVelocity = transform.InverseTransformDirection(rb.velocity);
         carVelocityRatio = currentCarLocalVelocity.z / maxSpeed;
+    }
+
+    private void SetCenterOfMass()
+    {
+        float x = 0;
+        float z = 0;
+        foreach(Transform point in rayPoints)
+        {
+            x += point.position.x;
+            z += point.position.z;
+        }
+        rb.centerOfMass = new Vector3(x, -0.25f, z); // Lower the center of mass.
     }
     #endregion
 
@@ -111,7 +134,7 @@ public class ACarController : MonoBehaviour
 
     private void Turn()
     {
-        rb.AddTorque(steerStrength * steerInput * turningCurve.Evaluate(carVelocityRatio) * Mathf.Sign(carVelocityRatio) * transform.up, ForceMode.Acceleration);
+        rb.AddRelativeTorque(steerStrength * steerInput * turningCurve.Evaluate(Mathf.Abs(carVelocityRatio)) * Mathf.Sign(carVelocityRatio) * transform.up, ForceMode.Acceleration);
     }
 
     private void SidewaysDrag()
@@ -132,9 +155,9 @@ public class ACarController : MonoBehaviour
         for(int i = 0; i < rayPoints.Length; i++)
         {
             RaycastHit hit;
-            float maxLength = restLength + springTravel;
+            float maxDistance = restLength + springTravel;
 
-            if (Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, maxLength + wheelRadius, driveableLayer))
+            if (Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, maxDistance + wheelRadius, driveableLayer))
             {
                 groundedWheels[i] = 1;
 
@@ -150,15 +173,57 @@ public class ACarController : MonoBehaviour
 
                 rb.AddForceAtPosition(netForce * rayPoints[i].up, rayPoints[i].position);
 
+                // Visuals
+                SetTirePosition(tires[i], hit.point + rayPoints[i].up * wheelRadius);
+
                 if (wheelRays) Debug.DrawLine(rayPoints[i].position, hit.point, Color.red);
             }
             else
             {
                 groundedWheels[i] = 0;
 
-                if (wheelRays) Debug.DrawLine(rayPoints[i].position, rayPoints[i].position + (wheelRadius + maxLength) * -rayPoints[i].up, Color.green);
+                // Visuals
+                SetTirePosition(tires[i], rayPoints[i].position - rayPoints[i].up * maxDistance);
+
+                if (wheelRays) Debug.DrawLine(rayPoints[i].position, rayPoints[i].position + (wheelRadius + maxDistance) * -rayPoints[i].up, Color.green);
             }
         }
     }
     #endregion
+
+    #region Visuals
+    private void Visuals()
+    {
+        TireVisuals();
+
+        var orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
+        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = steerInput * 5;
+    }
+
+    private void TireVisuals()
+    {
+        float steeringAngle = maxTireSteeringAngle * steerInput;
+
+        for (int i = 0; i < tires.Length; i++)
+        {
+            if (i < 2)  // Front tires
+            {
+                tires[i].transform.Rotate(Vector3.up, tireRotSpeed * carVelocityRatio * Time.deltaTime, Space.Self);  // Front tires spin using velocity
+
+                frontTireParents[i].transform.localEulerAngles = new Vector3(frontTireParents[i].transform.localEulerAngles.x, steeringAngle, frontTireParents[i].transform.localEulerAngles.z);
+            }
+            else  // Rear tires
+            {
+                tires[i].transform.Rotate(Vector3.up, tireRotSpeed * moveInput * Time.deltaTime, Space.Self);  // Rear tires spin using acceleration
+            }
+        }
+    }
+
+    private void SetTirePosition(GameObject tire, Vector3 targetPosition)
+    {
+        tire.transform.position = targetPosition;
+    }
+    #endregion
 }
+
+
