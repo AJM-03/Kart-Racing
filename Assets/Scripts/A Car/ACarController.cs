@@ -26,6 +26,9 @@ public class ACarController : MonoBehaviour
     private int[] groundedWheels = new int[4];
     private bool isGrounded = false;
     private bool isBraking = false;
+    private bool isDrifting = false;
+    private int driftDirection;
+    private float driftControl;
 
     [Header("Input")]
     private float moveInput = 0;
@@ -42,6 +45,10 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float dragCoefficient = 1f;  // Side force preventing the car from sliding
     [SerializeField] private float brakingDeceleration = 100f;
     [SerializeField] private float brakingDragCoefficient = 0.5f;
+    [SerializeField, Range(1f, 3f)] private float driftSharpTurn = 2;
+    [SerializeField, Range(0, 1.5f)] private float driftWideTurn = 0;
+    [SerializeField, Range(1f, 3f)] private float brakeDriftSharpTurn = 2;
+    [SerializeField, Range(0, 1.5f)] private float brakeDriftWideTurn = 0;
 
     private Vector3 currentCarLocalVelocity = Vector3.zero;
     private float carVelocityRatio = 0;  // Current speed in comparison to top speed
@@ -50,7 +57,7 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float tireRotSpeed = 3000f;
     [SerializeField] private float maxTireSteeringAngle = 30f;
     [SerializeField] private float minSideSkidVelocity = 10f;
-    [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[2];
+    [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];
 
     [Header("Debug")]
     [SerializeField] private bool wheelRays = true;
@@ -65,6 +72,7 @@ public class ACarController : MonoBehaviour
     private void Update()
     {
         GetPlayerInput();
+        Drift();
         UpdateDebugStats();
     }
 
@@ -130,7 +138,7 @@ public class ACarController : MonoBehaviour
     #region Input Handling
     private void GetPlayerInput()
     {
-        moveInput = Input.GetAxis("Vertical");
+        moveInput = Input.GetButton("Fire1") ? 1 : (Input.GetButton("Fire2") ? -1 : 0);
         steerInput = Input.GetAxis("Horizontal");
     }
     #endregion
@@ -151,6 +159,7 @@ public class ACarController : MonoBehaviour
     {
         bool reversing = (moveInput < 0 && carVelocityRatio < 0);
         if (Mathf.Abs(currentCarLocalVelocity.z) >= (!reversing ? maxSpeed : maxReverseSpeed)) return;
+
         rb.AddForceAtPosition((!reversing ? acceleration : reverseAcceleration) * moveInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
     }
 
@@ -161,7 +170,34 @@ public class ACarController : MonoBehaviour
 
     private void Turn()
     {
-        rb.AddRelativeTorque(steerStrength * steerInput * turningCurve.Evaluate(Mathf.Abs(carVelocityRatio)) * Mathf.Sign(carVelocityRatio) * transform.up, ForceMode.Acceleration);
+        float turnAmount = steerInput;
+
+        if (isDrifting) 
+            turnAmount = driftControl * driftDirection;
+
+        rb.AddRelativeTorque(steerStrength * turnAmount * turningCurve.Evaluate(Mathf.Abs(carVelocityRatio)) * Mathf.Sign(carVelocityRatio) * transform.up, ForceMode.Acceleration);
+    }
+
+    private void Drift()
+    {
+        if (Input.GetButtonDown("Jump") && !isDrifting && steerInput != 0)
+        {
+            isDrifting = true;
+            driftDirection = steerInput > 0 ? 1 : -1;
+        }
+
+        if (Input.GetButtonUp("Jump") && isDrifting)
+        {
+            isDrifting = false;
+        }
+
+        if (isDrifting)
+        {
+            if (Input.GetButton("Fire2")) // Brake Drifting
+                driftControl = (driftDirection == 1) ? ExtensionMethods.Remap(steerInput, -1, 1, brakeDriftWideTurn, brakeDriftSharpTurn) : ExtensionMethods.Remap(steerInput, -1, 1, brakeDriftSharpTurn, brakeDriftWideTurn);
+            else
+                driftControl = (driftDirection == 1) ? ExtensionMethods.Remap(steerInput, -1, 1, driftWideTurn, driftSharpTurn) : ExtensionMethods.Remap(steerInput, -1, 1, driftSharpTurn, driftWideTurn);
+        }
     }
 
     private void SidewaysDrag()
@@ -254,13 +290,29 @@ public class ACarController : MonoBehaviour
 
     private void VFX()
     {
-        if (isGrounded && Mathf.Abs(currentCarLocalVelocity.x) > minSideSkidVelocity && carVelocityRatio > 0)
+        ToggleSkidMarks(false);
+
+        // Drifting
+        if (isGrounded && isDrifting)
+        {
+            for (int i = 0; i < skidMarks.Length; i++)
+            {
+                if (driftDirection == 1 && i % 2 == 0) skidMarks[i].emitting = true;
+                else if (driftDirection == -1 && i % 2 != 0) skidMarks[i].emitting = true;
+            }
+        }
+        // Braking
+        else if (isGrounded && isBraking)
         {
             ToggleSkidMarks(true);
         }
-        else
+        // Turning
+        else if (isGrounded && Mathf.Abs(currentCarLocalVelocity.x) > minSideSkidVelocity && carVelocityRatio > 0)
         {
-            ToggleSkidMarks(false);
+            for (int i = 0; i < skidMarks.Length; i++)
+            {
+                if (i > 1) skidMarks[i].emitting = true;
+            }
         }
     }
 
