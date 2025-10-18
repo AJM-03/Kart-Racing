@@ -12,6 +12,7 @@ public class DebugStatsDisplay : MonoBehaviour
         text.text = @$"
 MoveInput: {DebugStats.moveInput}
 SteerInput: {DebugStats.steerInput}
+Braking: {DebugStats.braking}
 CurrentCarVelocity: {DebugStats.currentCarLocalVelocity}
 CarVelocityRatio: {DebugStats.carVelocityRatio}
 GroundedWheels: {DebugStats.groundedWheels}

@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +25,7 @@ public class ACarController : MonoBehaviour
     [Header("Car Status")]
     private int[] groundedWheels = new int[4];
     private bool isGrounded = false;
+    private bool isBraking = false;
 
     [Header("Input")]
     private float moveInput = 0;
@@ -33,9 +35,13 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float acceleration = 25f;
     [SerializeField] private float maxSpeed = 100f;
     [SerializeField] private float deceleration = 10f;
+    [SerializeField] private float reverseAcceleration = 15f;
+    [SerializeField] private float maxReverseSpeed = 20f;
     [SerializeField] private float steerStrength = 15f;
     [SerializeField] private AnimationCurve turningCurve;  // Dynamically change turning strength based on the car's velocity
     [SerializeField] private float dragCoefficient = 1f;  // Side force preventing the car from sliding
+    [SerializeField] private float brakingDeceleration = 100f;
+    [SerializeField] private float brakingDragCoefficient = 0.5f;
 
     private Vector3 currentCarLocalVelocity = Vector3.zero;
     private float carVelocityRatio = 0;  // Current speed in comparison to top speed
@@ -43,6 +49,8 @@ public class ACarController : MonoBehaviour
     [Header("Visuals")]
     [SerializeField] private float tireRotSpeed = 3000f;
     [SerializeField] private float maxTireSteeringAngle = 30f;
+    [SerializeField] private float minSideSkidVelocity = 10f;
+    [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[2];
 
     [Header("Debug")]
     [SerializeField] private bool wheelRays = true;
@@ -64,6 +72,7 @@ public class ACarController : MonoBehaviour
     {
         Suspension();
         GroundCheck();
+        BrakeCheck();
         CalculateCarVelocity();
         Movement();
         Visuals();
@@ -83,6 +92,8 @@ public class ACarController : MonoBehaviour
         else
             isGrounded = false;
     }
+
+    private void BrakeCheck() { isBraking = (moveInput < 0 && carVelocityRatio > 0 && isGrounded); }
 
     private void CalculateCarVelocity()
     {
@@ -106,6 +117,7 @@ public class ACarController : MonoBehaviour
     {
         DebugStats.moveInput = moveInput;
         DebugStats.steerInput = steerInput;
+        DebugStats.braking = isBraking;
         DebugStats.currentCarLocalVelocity = currentCarLocalVelocity;
         DebugStats.carVelocityRatio = carVelocityRatio;
 
@@ -137,12 +149,14 @@ public class ACarController : MonoBehaviour
 
     private void Acceleration()
     {
-        rb.AddForceAtPosition(acceleration * moveInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+        bool reversing = (moveInput < 0 && carVelocityRatio < 0);
+        if (Mathf.Abs(currentCarLocalVelocity.z) >= (!reversing ? maxSpeed : maxReverseSpeed)) return;
+        rb.AddForceAtPosition((!reversing ? acceleration : reverseAcceleration) * moveInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
     }
 
     private void Deceleration()
     {
-        rb.AddForceAtPosition(deceleration * moveInput * -transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+        rb.AddForce((isBraking ? brakingDeceleration : deceleration) * carVelocityRatio * -rb.transform.forward, ForceMode.Acceleration);
     }
 
     private void Turn()
@@ -154,7 +168,7 @@ public class ACarController : MonoBehaviour
     {
         float currentSidewaysSpeed = currentCarLocalVelocity.x;
 
-        float dragMagnitude = -currentSidewaysSpeed * dragCoefficient;
+        float dragMagnitude = -currentSidewaysSpeed * (isBraking ? brakingDragCoefficient : dragCoefficient);
 
         Vector3 dragForce = transform.right * dragMagnitude;
 
@@ -208,6 +222,7 @@ public class ACarController : MonoBehaviour
     private void Visuals()
     {
         TireVisuals();
+        VFX();
 
         var orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
         if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = steerInput * 1;
@@ -236,6 +251,20 @@ public class ACarController : MonoBehaviour
     {
         tire.transform.position = targetPosition;
     }
+
+    private void VFX()
+    {
+        if (isGrounded && Mathf.Abs(currentCarLocalVelocity.x) > minSideSkidVelocity && carVelocityRatio > 0)
+        {
+            ToggleSkidMarks(true);
+        }
+        else
+        {
+            ToggleSkidMarks(false);
+        }
+    }
+
+    private void ToggleSkidMarks(bool toggle) { foreach (var skidMark in skidMarks) { skidMark.emitting = toggle; } }
     #endregion
 }
 
