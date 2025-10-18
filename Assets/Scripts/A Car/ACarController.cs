@@ -56,13 +56,15 @@ public class ACarController : MonoBehaviour
     private float carVelocityRatio = 0;  // Current speed in comparison to top speed
 
     [Header("Visuals")]
-    [SerializeField] private float tireRotSpeed = 3000f;
-    [SerializeField] private float maxTireSteeringAngle = 30f;
-    [SerializeField] private float minSideSkidVelocity = 10f;
-    [SerializeField, Range(0, 120)] private float maxDriftCarAngle = 30f;
-    private Vector3[] tirePositions = new Vector3[4];
-    [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];
-    [SerializeField, Range(0f, 1.5f)] private float cameraHeadingChange = 0.75f;
+    [SerializeField] private float tireRotSpeed = 3000f;  // How quickly tires will spin at maxSpeed
+    [SerializeField] private float maxTireSteeringAngle = 30f;  // How far the front tires will rotate when steering
+    [SerializeField] private float minSideSkidVelocity = 10f;  // How fast you need to be sliding for skid marks to appear on rear tires
+    [SerializeField, Range(0f, 5f)] private float modelRotationSpeed = 0.1f;  // How quickly the car model will rotate
+    [SerializeField, Range(0, 120)] private float maxDriftCarAngle = 30f;  // How far the car will turn when sharply brake drifting
+    [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];  // The four skid mark trail renderers
+    [SerializeField, Range(0f, 1.5f)] private float cameraHeadingChange = 0.75f;  // How far the camera will move left and right when steering
+    private Vector3[] tirePositions = new Vector3[4];  // The starting positions for each tire
+    private Quaternion targetCarRotation;  // The rotation that the car wants to reach
 
     [Header("Debug")]
     [SerializeField] private bool wheelRays = true;
@@ -81,6 +83,7 @@ public class ACarController : MonoBehaviour
         GetPlayerInput();
         Drift();
         UpdateDebugStats();
+        CameraMovement();
     }
 
     private void FixedUpdate()
@@ -268,11 +271,6 @@ public class ACarController : MonoBehaviour
         TireVisuals();
         VFX();
         TurnCarRotation();
-
-        var orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
-        float turnAmount = steerInput;
-        if (isDrifting) turnAmount = driftControl * driftDirection;
-        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = turnAmount * cameraHeadingChange;
     }
 
     private void TurnCarRotation()
@@ -283,7 +281,9 @@ public class ACarController : MonoBehaviour
         if (isDrifting) turnAmount = driftControl * driftDirection;
         float y = Mathf.InverseLerp(0, brakeDriftSharpTurn, Mathf.Abs(turnAmount));
         y = (y / 100) * (carVelocityRatio * 100);
-        carModel.localEulerAngles = new Vector3(0, Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput), Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput) / 3); 
+        targetCarRotation = Quaternion.Euler(new Vector3(0, Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput), Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput) / 3)); 
+
+        carModel.localRotation = Quaternion.Lerp(carModel.localRotation, targetCarRotation, modelRotationSpeed * Time.fixedDeltaTime);
     }
 
     private void TireVisuals()
@@ -344,6 +344,15 @@ public class ACarController : MonoBehaviour
     }
 
     private void ToggleSkidMarks(bool toggle) { foreach (var skidMark in skidMarks) { skidMark.emitting = toggle; } }
+
+    private void CameraMovement()
+    {
+        var orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
+        float turnAmount = steerInput;
+        if (isDrifting) turnAmount = driftControl * driftDirection;
+        if (!isGrounded) turnAmount = 0;
+        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = turnAmount * cameraHeadingChange;
+    }
     #endregion
 }
 
