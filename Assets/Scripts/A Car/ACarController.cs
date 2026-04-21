@@ -143,6 +143,14 @@ public class ACarController : MonoBehaviour
         int gW = 0;
         for (int i = 0; i < groundedWheels.Length; i++) { gW += groundedWheels[i]; }
         DebugStats.groundedWheels = gW;
+
+        if (wheelRays)
+        {
+            foreach (Transform p in rayPoints)
+            {
+                p.gameObject.GetComponent<DebugWheelForces>().SetForce();
+            }
+        }
     }
     #endregion
 
@@ -250,7 +258,7 @@ public class ACarController : MonoBehaviour
                 // Visuals
                 SetTirePosition(tires[i], hit.point + rayPoints[i].up * wheelRadius, i);
 
-                if (wheelRays) Debug.DrawLine(rayPoints[i].position, hit.point, Color.red);
+                if (wheelRays) rayPoints[i].GetComponent<DebugWheelForces>().SetSuspension(hit.point);
             }
             else
             {
@@ -259,7 +267,7 @@ public class ACarController : MonoBehaviour
                 // Visuals
                 SetTirePosition(tires[i], rayPoints[i].position - rayPoints[i].up * maxDistance, i);
 
-                if (wheelRays) Debug.DrawLine(rayPoints[i].position, rayPoints[i].position + (wheelRadius + maxDistance) * -rayPoints[i].up, Color.green);
+                if (wheelRays) rayPoints[i].GetComponent<DebugWheelForces>().SetSuspension(rayPoints[i].position + (wheelRadius + maxDistance) * -rayPoints[i].up);
             }
         }
     }

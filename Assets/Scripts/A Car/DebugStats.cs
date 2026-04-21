@@ -11,4 +11,6 @@ public static class DebugStats
     public static Vector3 currentCarLocalVelocity;
     public static float carVelocityRatio;
     public static int groundedWheels;
+
+    public static bool showWheelForces = true;
 }
