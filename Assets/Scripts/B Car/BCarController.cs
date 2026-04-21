@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ACarController : MonoBehaviour
+public class BCarController : MonoBehaviour
 {
     [Header("References")]
     private Rigidbody rb;
@@ -25,8 +25,7 @@ public class ACarController : MonoBehaviour
 
     [Header("Car Status")]
     private int[] groundedWheels = new int[4];
-    private bool isGrounded = false;  // Whether the car is on the ground (requires 1 wheel on the ground)
-    private float airTime;  // How long the car has been in the air
+    private bool isGrounded = false;
     private bool isBraking = false;
     private bool isDrifting = false;
     private int driftDirection;
@@ -55,11 +54,6 @@ public class ACarController : MonoBehaviour
 
     private Vector3 currentCarLocalVelocity = Vector3.zero;
     private float carVelocityRatio = 0;  // Current speed in comparison to top speed
-
-    [Header("Car Rotation")]
-    [SerializeField] private float carRotationMaxX = 60f;  // The car's maximum X rotation
-    [SerializeField] private float carRotationMaxZ = 60f;  // The car's maximum Z rotation
-    [SerializeField] private AnimationCurve airRotationCurve;  // How quickly the car returns to defualt rotation while in the air
 
     [Header("Visuals")]
     [SerializeField] private float tireRotSpeed = 3000f;  // How quickly tires will spin at maxSpeed
@@ -99,7 +93,6 @@ public class ACarController : MonoBehaviour
         BrakeCheck();
         CalculateCarVelocity();
         Movement();
-        CarRotation();
         Visuals();
     }
 
@@ -107,21 +100,15 @@ public class ACarController : MonoBehaviour
     private void GroundCheck()
     {
         int tempGroundedWheels = 0;
-        for (int i = 0; i < groundedWheels.Length; i++)
+        for(int i = 0; i < groundedWheels.Length; i++)
         {
             tempGroundedWheels += groundedWheels[i];  // If wheel is grounded add one
         }
 
         if (tempGroundedWheels > 1)
-        {
             isGrounded = true;
-            airTime = 0;
-        }
         else
-        {
             isGrounded = false;
-            airTime += Time.deltaTime;
-        }
     }
 
     private void BrakeCheck() { isBraking = (moveInput < 0 && carVelocityRatio > 0 && isGrounded); }
@@ -242,49 +229,6 @@ public class ACarController : MonoBehaviour
 
         rb.AddForceAtPosition(dragForce, rb.worldCenterOfMass, ForceMode.Acceleration);
     }
-
-    private void CarRotation()
-    {
-
-
-
-
-
-        // Get current rotation in Euler angles
-        Vector3 currentRotation = transform.localEulerAngles;
-
-        // Convert Unity's 0–360 range to -180–180 for easier clamping
-        currentRotation.x = NormalizeAngle(currentRotation.x);
-        currentRotation.z = NormalizeAngle(currentRotation.z);
-
-        // Clamp each axis
-        currentRotation.x = Mathf.Clamp(currentRotation.x, -carRotationMaxX, carRotationMaxX);
-        currentRotation.z = Mathf.Clamp(currentRotation.z, -carRotationMaxZ, carRotationMaxZ);
-
-        if (!isGrounded)
-        {
-            if (currentRotation.x < -1)
-                currentRotation.x += airRotationCurve.Evaluate(airTime);
-            else if (currentRotation.x > 1)
-                currentRotation.x -= airRotationCurve.Evaluate(airTime);
-
-            if (currentRotation.z < -1)
-                currentRotation.z += airRotationCurve.Evaluate(airTime);
-            else if (currentRotation.z > 1)
-                currentRotation.z -= airRotationCurve.Evaluate(airTime);
-        }
-
-        // Apply clamped rotation
-        transform.localEulerAngles = currentRotation;
-    }
-
-    // Converts angles from 0–360 to -180–180
-    private float NormalizeAngle(float angle)
-    {
-        if (angle > 180f) angle -= 360f;
-        return angle;
-    }
-
     #endregion
 
     #region Suspension
@@ -297,24 +241,17 @@ public class ACarController : MonoBehaviour
 
             if (Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, maxDistance + wheelRadius, driveableLayer))
             {
-                groundedWheels[i] = 1;
+                // Suspension Spring Force
 
-                float currentSpringLength = hit.distance - wheelRadius;
-                float springCompression = (restLength - currentSpringLength) / springTravel;  // How much the spring is compressed in a normalized format
+                Vector3 springDir = rayPoints[i].up;
 
-                float springVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoints[i].position), rayPoints[i].up);
-                float dampForce = damperStiffness * springVelocity;
+                Vector3 tireWorldVel = rb.GetPointVelocity(rayPoints[i].position);
 
-                float springForce = springStiffness * springCompression;
+                float offset = restLength - maxDistance;
 
-                float netForce = springForce - dampForce;
+                float vel = Vector3.Dot(springDir, tireWorldVel);
 
-                rb.AddForceAtPosition(netForce * rayPoints[i].up, rayPoints[i].position);
-
-                // Visuals
-                SetTirePosition(tires[i], hit.point + rayPoints[i].up * wheelRadius, i);
-
-                if (wheelRays) rayPoints[i].GetComponent<DebugWheelForces>().SetSuspension(rayPoints[i].position + (netForce) * rayPoints[i].up );
+                //float force = (offset * springStrength)
             }
             else
             {
@@ -376,8 +313,7 @@ public class ACarController : MonoBehaviour
         if (isDrifting && driftDirection == 1 && tireIndex % 2 != 0) tireY = tire.transform.parent.position.y - restLength;
         if (isDrifting && driftDirection == -1 && tireIndex % 2 == 0) tireY = tire.transform.parent.position.y - restLength;
 
-        tire.transform.position = Vector3.MoveTowards(tire.transform.position, new Vector3(tire.transform.parent.position.x, tireY, tire.transform.parent.position.z), 0.01f);
-        //tire.transform.position = new Vector3(tire.transform.parent.position.x, tireY, tire.transform.parent.position.z);
+        tire.transform.position = new Vector3(tire.transform.parent.position.x, tireY, tire.transform.parent.position.z);
     }
 
     private void VFX()
