@@ -68,7 +68,8 @@ public class ACarController : MonoBehaviour
     [SerializeField, Range(0f, 5f)] private float modelRotationSpeed = 0.1f;  // How quickly the car model will rotate
     [SerializeField, Range(0, 120)] private float maxDriftCarAngle = 30f;  // How far the car will turn when sharply brake drifting
     [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];  // The four skid mark trail renderers
-    [SerializeField, Range(0f, 1.5f)] private float cameraHeadingChange = 0.75f;  // How far the camera will move left and right when steering
+    [SerializeField, Range(0f, 5f)] private float cameraHeadingChange = 0.75f;  // How far the camera will move left and right when steering
+    [SerializeField] private float tireSuspensionMoveSpeed = 0.01f;  // How quickly the tires move up and down with the terrain
     private Vector3[] tirePositions = new Vector3[4];  // The starting positions for each tire
     private Quaternion targetCarRotation;  // The rotation that the car wants to reach
 
@@ -78,6 +79,7 @@ public class ACarController : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        virtualCamera = Camera.main.transform.parent.GetComponent<CinemachineVirtualCamera>();
 
         SetCenterOfMass();
 
@@ -376,7 +378,7 @@ public class ACarController : MonoBehaviour
         if (isDrifting && driftDirection == 1 && tireIndex % 2 != 0) tireY = tire.transform.parent.position.y - restLength;
         if (isDrifting && driftDirection == -1 && tireIndex % 2 == 0) tireY = tire.transform.parent.position.y - restLength;
 
-        tire.transform.position = Vector3.MoveTowards(tire.transform.position, new Vector3(tire.transform.parent.position.x, tireY, tire.transform.parent.position.z), 0.01f);
+        tire.transform.position = Vector3.MoveTowards(tire.transform.position, new Vector3(tire.transform.parent.position.x, tireY, tire.transform.parent.position.z), tireSuspensionMoveSpeed);
         //tire.transform.position = new Vector3(tire.transform.parent.position.x, tireY, tire.transform.parent.position.z);
     }
 
@@ -416,7 +418,7 @@ public class ACarController : MonoBehaviour
         float turnAmount = steerInput;
         if (isDrifting) turnAmount = driftControl * driftDirection;
         if (!isGrounded) turnAmount = 0;
-        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = turnAmount * cameraHeadingChange;
+        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = turnAmount * carVelocityRatio * cameraHeadingChange;
     }
     #endregion
 }
