@@ -8,52 +8,61 @@ public class ACarController : MonoBehaviour
 {
     [Header("References")]
     private Rigidbody rb;
-    [SerializeField] private Transform[] rayPoints;
+    [SerializeField] private Transform[] rayPoints;  // Where the wheel rays come from
     [SerializeField] private Transform accelerationPoint;
     [SerializeField] private Transform carModel;
     [SerializeField] private GameObject[] tires = new GameObject[4];
     [SerializeField] private GameObject[] frontTireParents = new GameObject[2];
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
-    [SerializeField] private LayerMask driveableLayer;
+    [SerializeField] private LayerMask driveableLayer;  // Layers that the car is able to drive on
 
     [Header("Suspension Settings")]
     [SerializeField] private float springStiffness;  // The max force a spring can exhert when fully compressed
     [SerializeField] private float damperStiffness;  // Calculate using https://youtu.be/sWshRRDxdSU?t=569
     [SerializeField] private float restLength;  // Standard length of a spring when not being compressed or stretched
     [SerializeField] private float springTravel;  // Max distance a spring can compress or extend from it's rest position
-    [SerializeField] private float wheelRadius;
+    [SerializeField] private float wheelRadius;  // The size of the wheel from center to bottom
 
     [Header("Car Status")]
-    private int[] groundedWheels = new int[4];
+    private int[] groundedWheels = new int[4];  // How many wheels are currently touching the ground
     private bool isGrounded = false;  // Whether the car is on the ground (requires 1 wheel on the ground)
     private float airTime;  // How long the car has been in the air
-    private bool isBraking = false;
-    private bool isDrifting = false;
-    private int driftDirection;
-    private float driftControl;
 
     [Header("Input")]
-    private float moveInput = 0;
-    private float steerInput = 0;
+    private float moveInput = 0;  // The player's current accel & decel input
+    private float steerInput = 0;  // The player's current steering input
 
-    [Header("Car Settings")]
-    [SerializeField] private float acceleration = 25f;
-    [SerializeField] private float maxSpeed = 100f;
-    [SerializeField] private float deceleration = 10f;
-    [SerializeField] private float reverseAcceleration = 15f;
-    [SerializeField] private float maxReverseSpeed = 20f;
-    [SerializeField] private float steerStrength = 15f;
-    [SerializeField] private AnimationCurve turningCurve;  // Dynamically change turning strength based on the car's velocity
+    [Header("Acceleration")]
+    [SerializeField] private float acceleration = 25f;  // The acceleration of the car
+    [SerializeField] private float maxSpeed = 100f;  // The top speed of the car
+    [SerializeField] private float deceleration = 10f;  // How quickly the car will slow down
     [SerializeField] private float dragCoefficient = 1f;  // Side force preventing the car from sliding
-    [SerializeField] private float brakingDeceleration = 100f;
-    [SerializeField] private float brakingDragCoefficient = 0.5f;
-    [SerializeField, Range(0f, 1f)] private float minVelocityRatioToDrift = 0.2f;
-    [SerializeField, Range(1f, 3f)] private float driftSharpTurn = 2;
-    [SerializeField, Range(0, 1.5f)] private float driftWideTurn = 0;
-    [SerializeField, Range(1f, 3f)] private float brakeDriftSharpTurn = 2;
-    [SerializeField, Range(0, 1.5f)] private float brakeDriftWideTurn = 0;
 
-    private Vector3 currentCarLocalVelocity = Vector3.zero;
+    [Header("Braking")]
+    [SerializeField] private float brakingDeceleration = 100f;  // How quickly you decelerate whilst braking
+    [SerializeField] private float brakingDragCoefficient = 0.5f;  // Side force preventing the car from sliding whilst braking
+    private bool isBraking = false;  // Whether the player is braking or not
+
+    [Header("Reversing")]
+    [SerializeField] private float reverseAcceleration = 15f;  // Acceleration whilst reversing
+    [SerializeField] private float maxReverseSpeed = 20f;  // Top speed whilst reversing
+
+    [Header("Steering")]
+    [SerializeField] private float steerStrength = 15f;  // The car's handling
+    [SerializeField] private AnimationCurve turningCurve;  // Dynamically change turning strength based on the car's velocity
+    [SerializeField] private AnimationCurve steeringSwingOut;  // How far the car swings out based on velocity and steering strength
+
+    [Header("Drifting")]
+    [SerializeField, Range(0f, 1f)] private float minVelocityRatioToDrift = 0.2f;  // How fast you must be going in comparison to top speed in order to drift
+    [SerializeField, Range(1f, 3f)] private float driftSharpTurn = 2;  // How wide you can drift
+    [SerializeField, Range(0, 1.5f)] private float driftWideTurn = 0;  // How tight you can drift
+    [SerializeField, Range(1f, 3f)] private float brakeDriftSharpTurn = 2;  // How wide you can brake drift
+    [SerializeField, Range(0, 1.5f)] private float brakeDriftWideTurn = 0;  // How tight you can brake drift
+    private bool isDrifting = false;  // Whether the car is drifting or not
+    private int driftDirection;  // Which way the car is drifting (-1 = Left, 1 = Right)
+    private float driftControl;  // How tightly you are drifting
+
+    private Vector3 currentCarLocalVelocity = Vector3.zero;  // The current speed of the car
     private float carVelocityRatio = 0;  // Current speed in comparison to top speed
 
     [Header("Car Rotation")]

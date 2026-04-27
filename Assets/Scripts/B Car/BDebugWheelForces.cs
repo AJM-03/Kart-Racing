@@ -18,19 +18,19 @@ public class BDebugWheelForces : MonoBehaviour
     public void SetAcceleration(Vector3 force)
     {
         suspLine.SetPosition(0, transform.position);
-        suspLine.SetPosition(1, force);
+        suspLine.SetPosition(1, force / 1000);
     }
 
     public void SetSteering(Vector3 force)
     {
         suspLine.SetPosition(0, transform.position);
-        suspLine.SetPosition(1, force);
+        suspLine.SetPosition(1, force / 1000);
     }
 
     public void SetSuspension(Vector3 force)
     {
         suspLine.SetPosition(0, transform.position);
-        suspLine.SetPosition(1, force);
+        suspLine.SetPosition(1, force / 1000);
     }
 
     public void SetForce()
