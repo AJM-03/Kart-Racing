@@ -37,6 +37,7 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float maxSpeed = 100f;  // The top speed of the car
     [SerializeField] private float deceleration = 10f;  // How quickly the car will slow down
     [SerializeField] private float dragCoefficient = 1f;  // Side force preventing the car from sliding
+    private bool isReversing;  // Whether the car is reversing or not
 
     [Header("Braking")]
     [SerializeField] private float brakingDeceleration = 100f;  // How quickly you decelerate whilst braking
@@ -50,7 +51,13 @@ public class ACarController : MonoBehaviour
     [Header("Steering")]
     [SerializeField] private float steerStrength = 15f;  // The car's handling
     [SerializeField] private AnimationCurve turningCurve;  // Dynamically change turning strength based on the car's velocity
-    [SerializeField] private AnimationCurve steeringSwingOut;  // How far the car swings out based on velocity and steering strength
+    private float steeringTime;  // How long the car has been steering in this direction
+    private int steeringDirection;  // Which way the car is steering (-1 = Left, 1 = Right)
+
+    [SerializeField] private float steerSwingStrength = 5;  // How much the car will swing out when turning
+    [SerializeField] private AnimationCurve steeringSwingCurve;  // How far the car swings out based on velocity and steering strength
+    [SerializeField] private float steerSwingTime = 1;  // How long the swing will last
+    [SerializeField] private AnimationCurve steeringSwingTimeCurve;  // The strength of the swing over time
 
     [Header("Drifting")]
     [SerializeField, Range(0f, 1f)] private float minVelocityRatioToDrift = 0.2f;  // How fast you must be going in comparison to top speed in order to drift
@@ -200,10 +207,17 @@ public class ACarController : MonoBehaviour
 
     private void Acceleration()
     {
-        bool reversing = (moveInput < 0 && carVelocityRatio < 0);
-        if (Mathf.Abs(currentCarLocalVelocity.z) >= (!reversing ? maxSpeed : maxReverseSpeed)) return;
+        isReversing = (moveInput < 0 && carVelocityRatio < 0);
+        if (Mathf.Abs(currentCarLocalVelocity.z) >= (!isReversing ? maxSpeed : maxReverseSpeed)) return;  // If we are already at our max speed then stop
 
-        rb.AddForceAtPosition((!reversing ? acceleration : reverseAcceleration) * moveInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+        Vector3 accelDirection = accelerationPoint.transform.forward;
+        Debug.Log("AD - " + accelDirection);
+
+        //accelDirection
+        //Debug.Log("AD - " + accelDirection);
+
+
+        rb.AddForceAtPosition((!isReversing ? acceleration : reverseAcceleration) * moveInput * accelDirection, accelerationPoint.position, ForceMode.Acceleration);
     }
 
     private void Deceleration()
@@ -215,21 +229,38 @@ public class ACarController : MonoBehaviour
     {
         float turnAmount = steerInput;
 
+        int newSteeringDirection = steerInput > 0 ? 1 : -1;
+        if (turnAmount == 0 || steeringDirection != newSteeringDirection) steeringTime = 0;
+        else steeringTime += Time.fixedDeltaTime;
+        steeringDirection = newSteeringDirection;
+        Debug.Log("Steering Time - " + steeringTime);
         if (isDrifting) 
             turnAmount = driftControl * driftDirection;
 
         rb.AddRelativeTorque(steerStrength * turnAmount * turningCurve.Evaluate(Mathf.Abs(carVelocityRatio)) * Mathf.Sign(carVelocityRatio) * transform.up, ForceMode.Acceleration);
+
+
+        // Steering Swing
+        float swingAmount = steerSwingStrength * steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by
+        Debug.Log("SwingAmount - " + swingAmount);
+
+        if (isReversing) swingAmount = 0;  // Don't swing if reversing
+        if (steerInput > 0) swingAmount *= -1;  // Flip the force if steering right
+
+        Vector3 swingForce = transform.right * swingAmount;
+        Debug.Log("SwingForce - " + swingForce);
+        rb.AddForce(swingForce, ForceMode.Acceleration);
     }
 
     private void Drift()
     {
-        if (Input.GetButtonDown("Jump") && !isDrifting && steerInput != 0 && carVelocityRatio >= minVelocityRatioToDrift)
+        if (Input.GetButtonDown("Jump") && !isDrifting && steerInput != 0 && carVelocityRatio >= minVelocityRatioToDrift)  // Start Drifting
         {
             isDrifting = true;
             driftDirection = steerInput > 0 ? 1 : -1;
         }
 
-        if ((Input.GetButtonUp("Jump") || carVelocityRatio < minVelocityRatioToDrift) && isDrifting)
+        if ((Input.GetButtonUp("Jump") || carVelocityRatio < minVelocityRatioToDrift) && isDrifting)  // Stop Drifting
         {
             isDrifting = false;
         }
@@ -238,7 +269,7 @@ public class ACarController : MonoBehaviour
         {
             if (Input.GetButton("Fire2")) // Brake Drifting
                 driftControl = (driftDirection == 1) ? ExtensionMethods.Remap(steerInput, -1, 1, brakeDriftWideTurn, brakeDriftSharpTurn) : ExtensionMethods.Remap(steerInput, -1, 1, brakeDriftSharpTurn, brakeDriftWideTurn);
-            else
+            else  // Standard Drifting
                 driftControl = (driftDirection == 1) ? ExtensionMethods.Remap(steerInput, -1, 1, driftWideTurn, driftSharpTurn) : ExtensionMethods.Remap(steerInput, -1, 1, driftSharpTurn, driftWideTurn);
         }
     }
@@ -250,6 +281,8 @@ public class ACarController : MonoBehaviour
         float dragMagnitude = -currentSidewaysSpeed * (isBraking ? brakingDragCoefficient : dragCoefficient);
 
         Vector3 dragForce = transform.right * dragMagnitude;
+
+        if (steeringTime != 0) dragForce *= Mathf.Abs(steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime) - 1);
 
         rb.AddForceAtPosition(dragForce, rb.worldCenterOfMass, ForceMode.Acceleration);
     }
