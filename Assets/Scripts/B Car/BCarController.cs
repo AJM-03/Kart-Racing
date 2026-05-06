@@ -133,16 +133,16 @@ public class BCarController : MonoBehaviour
 
     private void UpdateDebugStats()
     {
-        DebugStats.moveInput = moveInput;
-        if (isDrifting) DebugStats.steerInput = driftControl * driftDirection;
-        else DebugStats.steerInput = steerInput;
-        DebugStats.braking = isBraking;
-        DebugStats.currentCarLocalVelocity = currentCarLocalVelocity;
-        DebugStats.carVelocityRatio = carVelocityRatio;
+        //DebugStats.moveInput = moveInput;
+        //if (isDrifting) DebugStats.steerInput = driftControl * driftDirection;
+        //else DebugStats.steerInput = steerInput;
+        //DebugStats.braking = isBraking;
+        //DebugStats.currentCarLocalVelocity = currentCarLocalVelocity;
+        //DebugStats.carVelocityRatio = carVelocityRatio;
 
-        int gW = 0;
-        for (int i = 0; i < groundedWheels.Length; i++) { gW += groundedWheels[i]; }
-        DebugStats.groundedWheels = gW;
+        //int gW = 0;
+        //for (int i = 0; i < groundedWheels.Length; i++) { gW += groundedWheels[i]; }
+        //DebugStats.groundedWheels = gW;
 
         if (wheelRays)
         {

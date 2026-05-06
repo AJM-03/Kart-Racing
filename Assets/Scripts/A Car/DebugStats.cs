@@ -5,12 +5,16 @@ using UnityEngine;
 
 public static class DebugStats
 {
-    public static float moveInput;
-    public static float steerInput;
-    public static bool braking;
-    public static Vector3 currentCarLocalVelocity;
-    public static float carVelocityRatio;
-    public static int groundedWheels;
+    public static List<CarDebugStats> carStats = new List<CarDebugStats>();
 
-    public static bool showWheelForces = true;
+}
+
+public class CarDebugStats
+{
+    public float moveInput;
+    public float steerInput;
+    public bool braking;
+    public Vector3 currentCarLocalVelocity;
+    public float carVelocityRatio;
+    public int groundedWheels;
 }

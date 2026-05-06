@@ -9,10 +9,10 @@ public class BDebugWheelForces : MonoBehaviour
     
     void Start()
     {
-        accelLine.gameObject.SetActive(DebugStats.showWheelForces);
-        steerLine.gameObject.SetActive(DebugStats.showWheelForces);
-        suspLine.gameObject.SetActive(DebugStats.showWheelForces);
-        forceLine.gameObject.SetActive(DebugStats.showWheelForces);
+        accelLine.gameObject.SetActive(false);
+        steerLine.gameObject.SetActive(false);
+         suspLine.gameObject.SetActive(false);
+        forceLine.gameObject.SetActive(false);
     }
 
     public void SetAcceleration(Vector3 force)

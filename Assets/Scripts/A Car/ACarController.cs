@@ -24,6 +24,7 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float wheelRadius;  // The size of the wheel from center to bottom
 
     [Header("Car Status")]
+    private int playerNumber = 0;
     private int[] groundedWheels = new int[4];  // How many wheels are currently touching the ground
     private bool isGrounded = false;  // Whether the car is on the ground (requires 1 wheel on the ground)
     private float airTime;  // How long the car has been in the air
@@ -58,15 +59,6 @@ public class ACarController : MonoBehaviour
     [SerializeField] private AnimationCurve steeringSwingCurve;  // How far the car swings out based on velocity and steering strength
     [SerializeField] private float steerSwingTime = 1;  // How long the swing will last
     [SerializeField] private AnimationCurve steeringSwingTimeCurve;  // The strength of the swing over time
-
-    [SerializeField] private float steerSweepStrength = 5;  // How much the car will swing out when turning
-    [SerializeField] private AnimationCurve steeringSweepVelocityCurve;  // How far the car swings out based on velocity and steering strength
-    [SerializeField] private float steerSweepTime = 1;  // How long the swing will last
-    [SerializeField] private AnimationCurve steeringSweepTimeCurve;  // How far the car swings out based on velocity and steering strength
-
-    [SerializeField] private Transform steerPointTransform;
-    [SerializeField] private ConfigurableJoint steerPointJoint;
-    [SerializeField] private float steerpointRadius;
 
 
     [Header("Drifting")]
@@ -107,34 +99,12 @@ public class ACarController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         virtualCamera = Camera.main.transform.parent.GetComponent<CinemachineVirtualCamera>();
 
+        UpdateDebugStats();
         SetCenterOfMass();
 
+        if (playerNumber > 1) Destroy(virtualCamera.transform.GetChild(0).gameObject);
+
         for (int i = 0; i < tires.Length; i++) tirePositions[i] = tires[i].transform.parent.localPosition;
-
-        //GameObject steerPointRbObj = new GameObject("Pivot Rigidbody");
-        //steerPointRbObj.transform.position = steerPointTransform.position;
-        //Rigidbody steerPointRb = steerPointRbObj.AddComponent<Rigidbody>();
-        //steerPointRb.isKinematic = true;
-
-        //steerPointJoint = gameObject.AddComponent<ConfigurableJoint>();
-        //steerPointJoint.connectedBody = steerPointRb;
-
-        //steerPointJoint.xMotion = ConfigurableJointMotion.Free;
-        //steerPointJoint.yMotion = ConfigurableJointMotion.Free;
-        //steerPointJoint.zMotion = ConfigurableJointMotion.Free;
-
-        //steerPointJoint.angularXMotion = ConfigurableJointMotion.Free;
-        //steerPointJoint.angularYMotion = ConfigurableJointMotion.Free;
-        //steerPointJoint.angularZMotion = ConfigurableJointMotion.Free;
-
-        //JointDrive angularDrive = new JointDrive
-        //{
-        //    positionSpring = 0,
-        //    positionDamper = 0,
-        //    maximumForce = Mathf.Infinity
-        //};
-        //steerPointJoint.angularXDrive = angularDrive;
-        //steerPointJoint.angularYZDrive = angularDrive;
     }
 
     private void Update()
@@ -191,24 +161,30 @@ public class ACarController : MonoBehaviour
         float z = 0;
         foreach(Transform point in rayPoints)
         {
-            x += point.position.x;
-            z += point.position.z;
+            x += point.localPosition.x;
+            z += point.localPosition.z;
         }
         rb.centerOfMass = new Vector3(x, -0.25f, z); // Lower the center of mass.
     }
 
     private void UpdateDebugStats()
     {
-        DebugStats.moveInput = moveInput;
-        if (isDrifting) DebugStats.steerInput = driftControl * driftDirection;
-        else DebugStats.steerInput = steerInput;
-        DebugStats.braking = isBraking;
-        DebugStats.currentCarLocalVelocity = currentCarLocalVelocity;
-        DebugStats.carVelocityRatio = carVelocityRatio;
+        if (playerNumber == 0)
+        {
+            DebugStats.carStats.Add(new CarDebugStats());
+            playerNumber = DebugStats.carStats.Count;
+        }
+
+        DebugStats.carStats[playerNumber - 1].moveInput = moveInput;
+        if (isDrifting) DebugStats.carStats[playerNumber - 1].steerInput = driftControl * driftDirection;
+        else DebugStats.carStats[playerNumber - 1].steerInput = steerInput;
+        DebugStats.carStats[playerNumber - 1].braking = isBraking;
+        DebugStats.carStats[playerNumber - 1].currentCarLocalVelocity = currentCarLocalVelocity;
+        DebugStats.carStats[playerNumber - 1].carVelocityRatio = carVelocityRatio;
 
         int gW = 0;
         for (int i = 0; i < groundedWheels.Length; i++) { gW += groundedWheels[i]; }
-        DebugStats.groundedWheels = gW;
+        DebugStats.carStats[playerNumber - 1].groundedWheels = gW;
 
         if (wheelRays)
         {
@@ -245,13 +221,6 @@ public class ACarController : MonoBehaviour
         isReversing = (moveInput < 0 && carVelocityRatio < 0);
         if (Mathf.Abs(currentCarLocalVelocity.z) >= (!isReversing ? maxSpeed : maxReverseSpeed)) return;  // If we are already at our max speed then stop
 
-        // Steering Sweep
-        //float sweepAmount = steerSweepStrength * steeringSweepVelocityCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSweepTimeCurve.Evaluate(steeringTime / steerSweepTime);  // Calculate how much to swing out by
-        //if (steeringTime == 0) sweepAmount = 0;  // Don't swing if reversing
-        //if (isReversing) sweepAmount = 0;  // Don't swing if reversing
-        //if (steerInput > 0) sweepAmount *= -1;  // Flip the force if steering right
-        //Debug.Log("SweepAmount - " + sweepAmount);
-        //accelerationPoint.localRotation = Quaternion.Euler(0, sweepAmount, 0);
 
         Vector3 accelDirection = accelerationPoint.transform.forward;
         Debug.Log("AD - " + accelDirection);
@@ -278,24 +247,6 @@ public class ACarController : MonoBehaviour
             turnAmount = driftControl * driftDirection;
 
         rb.AddRelativeTorque(steerStrength * turnAmount * turningCurve.Evaluate(Mathf.Abs(carVelocityRatio)) * Mathf.Sign(carVelocityRatio) * transform.up, ForceMode.Acceleration);
-
-
-        // Orbit
-        //Vector3 radialDir = (transform.position - steerPointTransform.position).normalized;
-        //Vector3 tangentialDir = Vector3.Cross(transform.right, radialDir).normalized;
-        //Vector3 localTorqueAxis = transform.InverseTransformDirection(tangentialDir);
-        //rb.AddRelativeTorque(localTorqueAxis * steerStrength * turnAmount * turningCurve.Evaluate(Mathf.Abs(carVelocityRatio)) * Mathf.Sign(carVelocityRatio), ForceMode.Acceleration);
-
-        // Steering Swing
-        //float swingAmount = steerSwingStrength * steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by
-        //Debug.Log("SwingAmount - " + swingAmount);
-
-        //if (isReversing) swingAmount = 0;  // Don't swing if reversing
-        //if (steerInput > 0) swingAmount *= -1;  // Flip the force if steering right
-
-        //Vector3 swingForce = transform.right * swingAmount;
-        //Debug.Log("SwingForce - " + swingForce);
-        //rb.AddForce(swingForce, ForceMode.Acceleration);
     }
 
     private void Drift()
@@ -328,21 +279,23 @@ public class ACarController : MonoBehaviour
 
         Vector3 dragForce = transform.right * dragMagnitude;
 
-        //if (steeringTime != 0) dragForce *= Mathf.Abs(steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime) - 1);
 
         // Steering Swing
-        float swingAmount = steerSwingStrength * steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by
-        Debug.Log("SwingAmount - " + swingAmount);
+        if (steerSwingStrength != 0)
+        {
+            float swingAmount = steerSwingStrength * steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by
+            Debug.Log("SwingAmount - " + swingAmount);
 
-        if (isReversing) swingAmount = 0;  // Don't swing if reversing
-        if (steerInput > 0) swingAmount *= -1;  // Flip the force if steering right
+            if (isReversing) swingAmount = 0;  // Don't swing if reversing
+            if (steerInput > 0) swingAmount *= -1;  // Flip the force if steering right
 
-        Vector3 swingForce = transform.right * swingAmount;
-        Debug.Log("SwingForce - " + swingForce);
+            Vector3 swingForce = transform.right * swingAmount;
+            Debug.Log("SwingForce - " + swingForce);
+            dragForce += swingForce;
+        }
 
 
-
-        rb.AddForceAtPosition(dragForce + swingForce, rb.worldCenterOfMass, ForceMode.Acceleration);
+        rb.AddForceAtPosition(dragForce, rb.worldCenterOfMass, ForceMode.Acceleration);
     }
 
     private void CarRotation()
