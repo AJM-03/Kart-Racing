@@ -59,6 +59,16 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float steerSwingTime = 1;  // How long the swing will last
     [SerializeField] private AnimationCurve steeringSwingTimeCurve;  // The strength of the swing over time
 
+    [SerializeField] private float steerSweepStrength = 5;  // How much the car will swing out when turning
+    [SerializeField] private AnimationCurve steeringSweepVelocityCurve;  // How far the car swings out based on velocity and steering strength
+    [SerializeField] private float steerSweepTime = 1;  // How long the swing will last
+    [SerializeField] private AnimationCurve steeringSweepTimeCurve;  // How far the car swings out based on velocity and steering strength
+
+    [SerializeField] private Transform steerPointTransform;
+    [SerializeField] private ConfigurableJoint steerPointJoint;
+    [SerializeField] private float steerpointRadius;
+
+
     [Header("Drifting")]
     [SerializeField, Range(0f, 1f)] private float minVelocityRatioToDrift = 0.2f;  // How fast you must be going in comparison to top speed in order to drift
     [SerializeField, Range(1f, 3f)] private float driftSharpTurn = 2;  // How wide you can drift
@@ -82,7 +92,7 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float maxTireSteeringAngle = 30f;  // How far the front tires will rotate when steering
     [SerializeField] private float minSideSkidVelocity = 10f;  // How fast you need to be sliding for skid marks to appear on rear tires
     [SerializeField, Range(0f, 5f)] private float modelRotationSpeed = 0.1f;  // How quickly the car model will rotate
-    [SerializeField, Range(0, 120)] private float maxDriftCarAngle = 30f;  // How far the car will turn when sharply brake drifting
+    [SerializeField, Range(0, 160)] private float maxDriftCarAngle = 30f;  // How far the car will turn when sharply brake drifting
     [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];  // The four skid mark trail renderers
     [SerializeField, Range(0f, 5f)] private float cameraHeadingChange = 0.75f;  // How far the camera will move left and right when steering
     [SerializeField] private float tireSuspensionMoveSpeed = 0.01f;  // How quickly the tires move up and down with the terrain
@@ -100,6 +110,31 @@ public class ACarController : MonoBehaviour
         SetCenterOfMass();
 
         for (int i = 0; i < tires.Length; i++) tirePositions[i] = tires[i].transform.parent.localPosition;
+
+        //GameObject steerPointRbObj = new GameObject("Pivot Rigidbody");
+        //steerPointRbObj.transform.position = steerPointTransform.position;
+        //Rigidbody steerPointRb = steerPointRbObj.AddComponent<Rigidbody>();
+        //steerPointRb.isKinematic = true;
+
+        //steerPointJoint = gameObject.AddComponent<ConfigurableJoint>();
+        //steerPointJoint.connectedBody = steerPointRb;
+
+        //steerPointJoint.xMotion = ConfigurableJointMotion.Free;
+        //steerPointJoint.yMotion = ConfigurableJointMotion.Free;
+        //steerPointJoint.zMotion = ConfigurableJointMotion.Free;
+
+        //steerPointJoint.angularXMotion = ConfigurableJointMotion.Free;
+        //steerPointJoint.angularYMotion = ConfigurableJointMotion.Free;
+        //steerPointJoint.angularZMotion = ConfigurableJointMotion.Free;
+
+        //JointDrive angularDrive = new JointDrive
+        //{
+        //    positionSpring = 0,
+        //    positionDamper = 0,
+        //    maximumForce = Mathf.Infinity
+        //};
+        //steerPointJoint.angularXDrive = angularDrive;
+        //steerPointJoint.angularYZDrive = angularDrive;
     }
 
     private void Update()
@@ -210,11 +245,16 @@ public class ACarController : MonoBehaviour
         isReversing = (moveInput < 0 && carVelocityRatio < 0);
         if (Mathf.Abs(currentCarLocalVelocity.z) >= (!isReversing ? maxSpeed : maxReverseSpeed)) return;  // If we are already at our max speed then stop
 
+        // Steering Sweep
+        //float sweepAmount = steerSweepStrength * steeringSweepVelocityCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSweepTimeCurve.Evaluate(steeringTime / steerSweepTime);  // Calculate how much to swing out by
+        //if (steeringTime == 0) sweepAmount = 0;  // Don't swing if reversing
+        //if (isReversing) sweepAmount = 0;  // Don't swing if reversing
+        //if (steerInput > 0) sweepAmount *= -1;  // Flip the force if steering right
+        //Debug.Log("SweepAmount - " + sweepAmount);
+        //accelerationPoint.localRotation = Quaternion.Euler(0, sweepAmount, 0);
+
         Vector3 accelDirection = accelerationPoint.transform.forward;
         Debug.Log("AD - " + accelDirection);
-
-        //accelDirection
-        //Debug.Log("AD - " + accelDirection);
 
 
         rb.AddForceAtPosition((!isReversing ? acceleration : reverseAcceleration) * moveInput * accelDirection, accelerationPoint.position, ForceMode.Acceleration);
@@ -240,16 +280,22 @@ public class ACarController : MonoBehaviour
         rb.AddRelativeTorque(steerStrength * turnAmount * turningCurve.Evaluate(Mathf.Abs(carVelocityRatio)) * Mathf.Sign(carVelocityRatio) * transform.up, ForceMode.Acceleration);
 
 
+        // Orbit
+        //Vector3 radialDir = (transform.position - steerPointTransform.position).normalized;
+        //Vector3 tangentialDir = Vector3.Cross(transform.right, radialDir).normalized;
+        //Vector3 localTorqueAxis = transform.InverseTransformDirection(tangentialDir);
+        //rb.AddRelativeTorque(localTorqueAxis * steerStrength * turnAmount * turningCurve.Evaluate(Mathf.Abs(carVelocityRatio)) * Mathf.Sign(carVelocityRatio), ForceMode.Acceleration);
+
         // Steering Swing
-        float swingAmount = steerSwingStrength * steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by
-        Debug.Log("SwingAmount - " + swingAmount);
+        //float swingAmount = steerSwingStrength * steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by
+        //Debug.Log("SwingAmount - " + swingAmount);
 
-        if (isReversing) swingAmount = 0;  // Don't swing if reversing
-        if (steerInput > 0) swingAmount *= -1;  // Flip the force if steering right
+        //if (isReversing) swingAmount = 0;  // Don't swing if reversing
+        //if (steerInput > 0) swingAmount *= -1;  // Flip the force if steering right
 
-        Vector3 swingForce = transform.right * swingAmount;
-        Debug.Log("SwingForce - " + swingForce);
-        rb.AddForce(swingForce, ForceMode.Acceleration);
+        //Vector3 swingForce = transform.right * swingAmount;
+        //Debug.Log("SwingForce - " + swingForce);
+        //rb.AddForce(swingForce, ForceMode.Acceleration);
     }
 
     private void Drift()
@@ -282,9 +328,21 @@ public class ACarController : MonoBehaviour
 
         Vector3 dragForce = transform.right * dragMagnitude;
 
-        if (steeringTime != 0) dragForce *= Mathf.Abs(steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime) - 1);
+        //if (steeringTime != 0) dragForce *= Mathf.Abs(steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime) - 1);
 
-        rb.AddForceAtPosition(dragForce, rb.worldCenterOfMass, ForceMode.Acceleration);
+        // Steering Swing
+        float swingAmount = steerSwingStrength * steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by
+        Debug.Log("SwingAmount - " + swingAmount);
+
+        if (isReversing) swingAmount = 0;  // Don't swing if reversing
+        if (steerInput > 0) swingAmount *= -1;  // Flip the force if steering right
+
+        Vector3 swingForce = transform.right * swingAmount;
+        Debug.Log("SwingForce - " + swingForce);
+
+
+
+        rb.AddForceAtPosition(dragForce + swingForce, rb.worldCenterOfMass, ForceMode.Acceleration);
     }
 
     private void CarRotation()
