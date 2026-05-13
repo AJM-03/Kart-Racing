@@ -22,6 +22,7 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float restLength;  // Standard length of a spring when not being compressed or stretched
     [SerializeField] private float springTravel;  // Max distance a spring can compress or extend from it's rest position
     [SerializeField] private float wheelRadius;  // The size of the wheel from center to bottom
+    [SerializeField] private float driveableSlopeLimt;  // How steep a slope has to be to not be considered driveable
 
     [Header("Car Status")]
     private int playerNumber = 0;
@@ -160,8 +161,8 @@ public class ACarController : MonoBehaviour
         else carVelocityRatio = currentCarLocalVelocity.z / maxReverseSpeed;
 
         carVelocityRatio = carVelocityRatio.Round(2);
-        if (carVelocityRatio >= 0.98) carVelocityRatio = 1;
-        if (carVelocityRatio <= -0.98) carVelocityRatio = -1;
+        if (carVelocityRatio >= 0.975) carVelocityRatio = 1;
+        if (carVelocityRatio <= -0.975) carVelocityRatio = -1;
     }
 
     private void SetCenterOfMass()
@@ -355,11 +356,21 @@ public class ACarController : MonoBehaviour
     {
         for(int i = 0; i < rayPoints.Length; i++)
         {
+            // Wheel to Ground Raycast
             RaycastHit hit;
+            bool didHit;
             float maxDistance = restLength + springTravel;
+            didHit = Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, maxDistance + wheelRadius, driveableLayer);
 
-            if (Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, maxDistance + wheelRadius, driveableLayer))
-            {
+            // Surface Slope
+            Vector3 surfaceNormal = hit.normal;  // Get the surface normal
+            float slopeAngle = Vector3.Angle(surfaceNormal, Vector3.up);  // Calculate slope angle relative to world up
+            Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, surfaceNormal), surfaceNormal).normalized; // Get slope direction(downhill vector)
+            Debug.Log($"Slope Angle: {slopeAngle:F2}° | Slope Direction: {slopeDirection}");
+
+
+            if (didHit && slopeAngle <= driveableSlopeLimt)  // If the wheel is on something it can drive on
+            {              
                 groundedWheels[i] = 1;
 
                 float currentSpringLength = hit.distance - wheelRadius;
