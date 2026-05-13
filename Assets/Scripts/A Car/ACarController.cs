@@ -29,6 +29,7 @@ public class ACarController : MonoBehaviour
     private int[] groundedWheels = new int[4];  // How many wheels are currently touching the ground
     private bool isGrounded = false;  // Whether the car is on the ground (requires 1 wheel on the ground)
     private float airTime;  // How long the car has been in the air
+    [HideInInspector] public bool canMove;  // Whether the car can move
 
     [Header("Input")]
     private float moveInput = 0;  // The player's current accel & decel input
@@ -88,9 +89,11 @@ public class ACarController : MonoBehaviour
     [SerializeField] private float maxTireSteeringAngle = 30f;  // How far the front tires will rotate when steering
     [SerializeField] private float minSideSkidVelocity = 10f;  // How fast you need to be sliding for skid marks to appear on rear tires
     [SerializeField, Range(0f, 5f)] private float modelRotationSpeed = 0.1f;  // How quickly the car model will rotate
-    [SerializeField, Range(0, 160)] private float maxDriftCarAngle = 30f;  // How far the car will turn when sharply brake drifting
+    [SerializeField, Range(0, 160)] private float maxDriftModelTurnAngle = 30f;  // How far the car will turn when sharply brake drifting
+    [SerializeField, Range(0, 160)] private float maxDriftModelTiltAngle = 30f;  // How far the car will turn when sharply brake drifting
     [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];  // The four skid mark trail renderers
     [SerializeField, Range(0f, 5f)] private float cameraHeadingChange = 0.75f;  // How far the camera will move left and right when steering
+    [SerializeField, Range(0f, 5f)] private float driftCameraHeadingChange = 0.75f;  // How far the camera will move left and right when drifting
     [SerializeField] private float tireSuspensionMoveSpeed = 0.01f;  // How quickly the tires move up and down with the terrain
     private Vector3[] tirePositions = new Vector3[4];  // The starting positions for each tire
     private Quaternion targetCarRotation;  // The rotation that the car wants to reach
@@ -103,6 +106,7 @@ public class ACarController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         virtualCamera = Camera.main.transform.parent.GetComponent<CinemachineVirtualCamera>();
 
+        canMove = true;
         UpdateDebugStats();
         SetCenterOfMass();
 
@@ -121,6 +125,7 @@ public class ACarController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!canMove) return;
         Suspension();
         GroundCheck();
         BrakeCheck();
@@ -195,14 +200,6 @@ public class ACarController : MonoBehaviour
         int gW = 0;
         for (int i = 0; i < groundedWheels.Length; i++) { gW += groundedWheels[i]; }
         DebugStats.carStats[playerNumber - 1].groundedWheels = gW;
-
-        if (wheelRays)
-        {
-            foreach (Transform p in rayPoints)
-            {
-                p.gameObject.GetComponent<DebugWheelForces>().SetForce();
-            }
-        }
     }
     #endregion
 
@@ -312,19 +309,18 @@ public class ACarController : MonoBehaviour
     }
 
     private void CarRotation()
-    {
-
-        // Get current rotation in Euler angles
+    {     
         Vector3 currentRotation = transform.localEulerAngles;
 
         // Convert Unity's 0–360 range to -180–180 for easier clamping
-        currentRotation.x = NormalizeAngle(currentRotation.x);
-        currentRotation.z = NormalizeAngle(currentRotation.z);
+        currentRotation.x = currentRotation.x.NormalizeAngle();
+        currentRotation.z = currentRotation.z.NormalizeAngle();
 
-        // Clamp each axis
+        // Clamp the car's rotation so it can't go too far
         currentRotation.x = Mathf.Clamp(currentRotation.x, -carRotationMaxX, carRotationMaxX);
         currentRotation.z = Mathf.Clamp(currentRotation.z, -carRotationMaxZ, carRotationMaxZ);
 
+        // Returns the car to a flat rotation if it has been in the air too long
         if (!isGrounded)
         {
             if (currentRotation.x < -1)
@@ -338,17 +334,8 @@ public class ACarController : MonoBehaviour
                 currentRotation.z -= airRotationCurve.Evaluate(airTime);
         }
 
-        // Apply clamped rotation
         transform.localEulerAngles = currentRotation;
     }
-
-    // Converts angles from 0–360 to -180–180
-    private float NormalizeAngle(float angle)
-    {
-        if (angle > 180f) angle -= 360f;
-        return angle;
-    }
-
     #endregion
 
     #region Suspension
@@ -361,6 +348,10 @@ public class ACarController : MonoBehaviour
             bool didHit;
             float maxDistance = restLength + springTravel;
             didHit = Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, maxDistance + wheelRadius, driveableLayer);
+
+            // Visual Wheel to Ground Raycast
+            RaycastHit visualHit;
+            Physics.Raycast(tires[i].transform.parent.position, -tires[i].transform.parent.up, out visualHit, maxDistance + wheelRadius, driveableLayer);
 
             // Surface Slope
             Vector3 surfaceNormal = hit.normal;  // Get the surface normal
@@ -384,21 +375,15 @@ public class ACarController : MonoBehaviour
                 float netForce = springForce - dampForce;
 
                 rb.AddForceAtPosition(netForce * rayPoints[i].up, rayPoints[i].position);
-
-                // Visuals
-                SetTirePosition(tires[i], hit.point + rayPoints[i].up * wheelRadius, i);
-
-                if (wheelRays) rayPoints[i].GetComponent<DebugWheelForces>().SetSuspension(rayPoints[i].position + (netForce) * rayPoints[i].up );
             }
             else
             {
                 groundedWheels[i] = 0;
-
-                // Visuals
-                SetTirePosition(tires[i], rayPoints[i].position - rayPoints[i].up * maxDistance, i);
-
-                if (wheelRays) rayPoints[i].GetComponent<DebugWheelForces>().SetSuspension(rayPoints[i].position + (wheelRadius + maxDistance) * -rayPoints[i].up);
             }
+
+            // Visuals
+            if (visualHit.collider != null) SetTirePosition(tires[i], visualHit.point + rayPoints[i].up * wheelRadius, i);
+            else SetTirePosition(tires[i], tires[i].transform.parent.position, i);
         }
     }
     #endregion
@@ -419,7 +404,16 @@ public class ACarController : MonoBehaviour
         if (isDrifting) turnAmount = driftControl * driftDirection;
         float y = Mathf.InverseLerp(0, brakeDriftSharpTurn, Mathf.Abs(turnAmount));
         y = (y / 100) * (carVelocityRatio * 100);
-        targetCarRotation = Quaternion.Euler(new Vector3(0, Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput), Mathf.Lerp(0, maxDriftCarAngle, y) * (isDrifting ? driftDirection : steerInput) / 3)); 
+
+        // Turn
+        float targetTurn = Mathf.Lerp(0, maxDriftModelTurnAngle, y) * (isDrifting ? driftDirection : steerInput);
+
+        // Tilt
+        float targetTilt = Mathf.Lerp(0, maxDriftModelTiltAngle, y) * (isDrifting ? driftDirection : steerInput);
+        if (isDrifting && !isBraking) targetTilt /= 2f;
+        if (!isDrifting) targetTilt /= 2.5f;
+
+        targetCarRotation = Quaternion.Euler(new Vector3(0, targetTurn, targetTilt)); 
 
         carModel.localRotation = Quaternion.Lerp(carModel.localRotation, targetCarRotation, modelRotationSpeed * Time.fixedDeltaTime);
     }
@@ -438,25 +432,29 @@ public class ACarController : MonoBehaviour
             }
             else  // Rear tires
             {
-                tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * moveInput * Time.deltaTime, Space.Self);  // Rear tires spin using acceleration
+                tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * ((carVelocityRatio + moveInput) / 2) * Time.deltaTime, Space.Self);  // Rear tires spin using velocity & acceleration
+                //tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * carVelocityRatio * Time.deltaTime, Space.Self);  // Rear tires spin using velocity
+                //tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * moveInput * Time.deltaTime, Space.Self);  // Rear tires spin using acceleration
             }
         }
     }
 
     private void SetTirePosition(GameObject tire, Vector3 targetPosition, int tireIndex)
     {
-        tire.transform.parent.localPosition = new Vector3(tirePositions[tireIndex].x, 0, tirePositions[tireIndex].z);
-        float tireY = targetPosition.y;
-        if (isDrifting && driftDirection == 1 && tireIndex % 2 != 0) tireY = tire.transform.parent.position.y - restLength;
-        if (isDrifting && driftDirection == -1 && tireIndex % 2 == 0) tireY = tire.transform.parent.position.y - restLength;
+        if (isDrifting && driftDirection == 1 && tireIndex % 2 != 0) targetPosition.y = tire.transform.parent.position.y;
+        if (isDrifting && driftDirection == -1 && tireIndex % 2 == 0) targetPosition.y = tire.transform.parent.position.y;
 
-        tire.transform.position = Vector3.MoveTowards(tire.transform.position, new Vector3(tire.transform.parent.position.x, tireY, tire.transform.parent.position.z), tireSuspensionMoveSpeed);
-        //tire.transform.position = new Vector3(tire.transform.parent.position.x, tireY, tire.transform.parent.position.z);
+        tire.transform.position = Vector3.MoveTowards(tire.transform.position, targetPosition, tireSuspensionMoveSpeed);
     }
 
     private void VFX()
     {
         ToggleSkidMarks(false);
+
+
+        for (int i = 0; i < skidMarks.Length; i++)
+            skidMarks[i].transform.position = tires[i].transform.position;
+
 
         // Drifting
         if (isGrounded && isDrifting)
@@ -490,7 +488,7 @@ public class ACarController : MonoBehaviour
         float turnAmount = steerInput;
         if (isDrifting) turnAmount = driftControl * driftDirection;
         if (!isGrounded) turnAmount = 0;
-        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = turnAmount * carVelocityRatio * cameraHeadingChange;
+        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = turnAmount * carVelocityRatio * (isDrifting ? driftCameraHeadingChange : cameraHeadingChange);
     }
     #endregion
 }

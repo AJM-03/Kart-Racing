@@ -35,4 +35,12 @@ public static class ExtensionMethods
             Mathf.Round(vector3.y * multiplier) / multiplier,
             Mathf.Round(vector3.z * multiplier) / multiplier);
     }
+
+
+    // Converts angles from 0–360 to -180–180
+    public static float NormalizeAngle(this float angle)
+    {
+        if (angle > 180f) angle -= 360f;
+        return angle;
+    }
 }
