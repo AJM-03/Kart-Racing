@@ -36,6 +36,7 @@ public class ACarController : MonoBehaviour
     [Header("Acceleration")]
     [SerializeField] private float acceleration = 25f;  // The acceleration of the car
     [SerializeField] private float maxSpeed = 100f;  // The top speed of the car
+    [SerializeField] private AnimationCurve accelerationCurve;  // The curve of how your car will reach top speed, using carVelocityRatio
     [SerializeField] private float deceleration = 10f;  // How quickly the car will slow down
     [SerializeField] private float dragCoefficient = 1f;  // Side force preventing the car from sliding
     private bool isReversing;  // Whether the car is reversing or not
@@ -48,6 +49,8 @@ public class ACarController : MonoBehaviour
     [Header("Reversing")]
     [SerializeField] private float reverseAcceleration = 15f;  // Acceleration whilst reversing
     [SerializeField] private float maxReverseSpeed = 20f;  // Top speed whilst reversing
+    [SerializeField] private AnimationCurve reverseAccelerationCurve;  // The curve of how your car will reach top reverse speed, using carVelocityRatio
+
 
     [Header("Steering")]
     [SerializeField] private float steerStrength = 15f;  // The car's handling
@@ -151,8 +154,14 @@ public class ACarController : MonoBehaviour
 
     private void CalculateCarVelocity()
     {
-        currentCarLocalVelocity = transform.InverseTransformDirection(rb.velocity);
-        carVelocityRatio = currentCarLocalVelocity.z / maxSpeed;
+        currentCarLocalVelocity = transform.InverseTransformDirection(rb.velocity).Round(2);
+
+        if (currentCarLocalVelocity.z >= 0) carVelocityRatio = currentCarLocalVelocity.z / maxSpeed;
+        else carVelocityRatio = currentCarLocalVelocity.z / maxReverseSpeed;
+
+        carVelocityRatio = carVelocityRatio.Round(2);
+        if (carVelocityRatio >= 0.98) carVelocityRatio = 1;
+        if (carVelocityRatio <= -0.98) carVelocityRatio = -1;
     }
 
     private void SetCenterOfMass()
@@ -223,10 +232,13 @@ public class ACarController : MonoBehaviour
 
 
         Vector3 accelDirection = accelerationPoint.transform.forward;
-        Debug.Log("AD - " + accelDirection);
 
 
-        rb.AddForceAtPosition((!isReversing ? acceleration : reverseAcceleration) * moveInput * accelDirection, accelerationPoint.position, ForceMode.Acceleration);
+        float accel = acceleration * accelerationCurve.Evaluate(carVelocityRatio);     
+        if (isReversing) accel = reverseAcceleration * reverseAccelerationCurve.Evaluate(carVelocityRatio);  // Reverse acceleration
+        accel *= moveInput;  // Multiply by the player's input (1 fowards, -1 reverse)
+
+        rb.AddForceAtPosition(accel * accelDirection, accelerationPoint.position, ForceMode.Acceleration);
     }
 
     private void Deceleration()
@@ -242,7 +254,7 @@ public class ACarController : MonoBehaviour
         if (turnAmount == 0 || steeringDirection != newSteeringDirection) steeringTime = 0;
         else steeringTime += Time.fixedDeltaTime;
         steeringDirection = newSteeringDirection;
-        Debug.Log("Steering Time - " + steeringTime);
+        //Debug.Log("Steering Time - " + steeringTime);
         if (isDrifting) 
             turnAmount = driftControl * driftDirection;
 
@@ -286,13 +298,11 @@ public class ACarController : MonoBehaviour
             float swingAmount = steerSwingStrength;
             if (!isDrifting) swingAmount *= steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by when not drifting
             else             swingAmount *= steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio));
-            Debug.Log("SwingAmount - " + swingAmount);
 
             if (isReversing) swingAmount = 0;  // Don't swing if reversing
             if ((!isDrifting && steerInput > 0) || (isDrifting && driftDirection > 0)) swingAmount *= -1;  // Flip the force if steering right
 
             Vector3 swingForce = transform.right * swingAmount;
-            Debug.Log("SwingForce - " + swingForce);
             dragForce += swingForce;
         }
 
@@ -302,10 +312,6 @@ public class ACarController : MonoBehaviour
 
     private void CarRotation()
     {
-
-
-
-
 
         // Get current rotation in Euler angles
         Vector3 currentRotation = transform.localEulerAngles;

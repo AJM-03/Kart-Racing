@@ -21,7 +21,7 @@ MoveInput: {DebugStats.carStats[i].moveInput}
 SteerInput: {DebugStats.carStats[i].steerInput}
 Braking: {DebugStats.carStats[i].braking}
 CurrentCarVelocity: {DebugStats.carStats[i].currentCarLocalVelocity}
-CarVelocityRatio: {DebugStats.carStats[i].carVelocityRatio}
+CarVelocityRatio: {DebugStats.carStats[i].carVelocityRatio:F2}
 GroundedWheels: {DebugStats.carStats[i].groundedWheels}
                 ";
             }
