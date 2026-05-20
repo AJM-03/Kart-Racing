@@ -79,6 +79,12 @@ public class ACarController : MonoBehaviour
     private Vector3 currentCarLocalVelocity = Vector3.zero;  // The current speed of the car
     private float carVelocityRatio = 0;  // Current speed in comparison to top speed
 
+    [Header("Wall Detection")]
+    [SerializeField] private LayerMask wallDetectionLayer;  // The layers that count as walls
+    [SerializeField] private float wallDetectionDistance = 3;  // How far away the car will detect walls
+    [SerializeField] private float wallCollisionRedirectSpeed;  // How fast driving into a wall will turn you
+    private bool carCollidingWithWall;  // If the car is currently touching a wall
+
     [Header("Car Rotation")]
     [SerializeField] private float carRotationMaxX = 60f;  // The car's maximum X rotation
     [SerializeField] private float carRotationMaxZ = 60f;  // The car's maximum Z rotation
@@ -130,6 +136,7 @@ public class ACarController : MonoBehaviour
         GroundCheck();
         BrakeCheck();
         CalculateCarVelocity();
+        WallDetection();
         Movement();
         CarRotation();
         Visuals();
@@ -180,6 +187,59 @@ public class ACarController : MonoBehaviour
             z += point.localPosition.z;
         }
         rb.centerOfMass = new Vector3(x, -0.25f, z); // Lower the center of mass.
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision == null) return;
+        if (wallDetectionLayer.Contains(collision.gameObject.layer))
+        {
+            Debug.Log("hit " + collision.gameObject.name);
+        }
+    }
+
+    private void WallDetection()
+    {
+        Transform lRayPoint = rayPoints[0];
+        Transform rRayPoint = rayPoints[1];
+
+        RaycastHit lHit, rHit;
+        bool lDidHit = Physics.Raycast(lRayPoint.position, lRayPoint.forward, out lHit, wallDetectionDistance, wallDetectionLayer, QueryTriggerInteraction.Ignore);
+        bool rDidHit = Physics.Raycast(rRayPoint.position, rRayPoint.forward, out rHit, wallDetectionDistance, wallDetectionLayer, QueryTriggerInteraction.Ignore);
+
+        Debug.DrawRay(lRayPoint.position, lRayPoint.forward * wallDetectionDistance, lDidHit ? Color.red : Color.green);
+        Debug.DrawRay(rRayPoint.position, rRayPoint.forward * wallDetectionDistance, rDidHit ? Color.red : Color.green);
+
+        float lDist = Mathf.Infinity;
+        float rDist = Mathf.Infinity;
+        if (lDidHit) lDist = lHit.distance;
+        if (rDidHit) rDist = rHit.distance;
+
+        if (lDist == Mathf.Infinity && rDist == Mathf.Infinity)  // If both rays miss, perform a third ray in the centre
+        {
+            Vector3 mRayPoint = Vector3.Lerp(lRayPoint.position, rRayPoint.position, 0.5f);
+            lDidHit = Physics.Raycast(mRayPoint, lRayPoint.forward, out lHit, wallDetectionDistance, wallDetectionLayer, QueryTriggerInteraction.Ignore);
+
+            Debug.DrawRay(mRayPoint, lRayPoint.forward * wallDetectionDistance, lDidHit ? Color.red : Color.green);
+
+            if (lDidHit) lDist = lHit.distance;  // Third ray will count as the left ray hitting
+            if (lDist == Mathf.Infinity) return;
+        }
+
+        if (lDidHit)
+        {
+            Debug.Log(Vector3.Angle(lRayPoint.forward, lHit.normal) / 180);
+        }
+
+        bool lCloser = lDist == Mathf.Min(lDist, rDist);
+        float closerDist = lCloser ? lDist : rDist;
+        float turnAmount = (closerDist / wallDetectionDistance);
+        if (!lCloser) turnAmount *= -1;
+
+        float carSpeed = Mathf.Max(carVelocityRatio, moveInput);
+        float hitAngle = (Vector3.Angle(lCloser ? lRayPoint.forward : rRayPoint.forward, lCloser ? lHit.normal : rHit.normal) - 90) / 90;  // 1 for head on, 0 for parallel
+
+        rb.AddRelativeTorque(steerStrength * turnAmount * hitAngle * transform.up, ForceMode.Acceleration);
     }
 
     private void UpdateDebugStats()
