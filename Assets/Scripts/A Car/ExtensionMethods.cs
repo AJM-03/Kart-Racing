@@ -16,6 +16,15 @@ public static class ExtensionMethods
     }
 
 
+
+    // Flips a value that is in a range
+    // Eg: Remapping 0.7 from a scale of 0-1 would give you 0.3
+    public static float Flip(this float value, float max = 1)
+    {
+        return Mathf.Abs(value - max);
+    }
+
+
     // Rounds a float
     public static float Round(this float f, int decimalPlaces = 2)
     {
