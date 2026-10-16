@@ -1,4 +1,5 @@
 using Cinemachine;
+using Fusion;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -83,7 +84,9 @@ public class ACarController : MonoBehaviour
     [SerializeField] private LayerMask wallDetectionLayer;  // The layers that count as walls
     [SerializeField] private float wallDetectionDistance = 3;  // How far away the car will detect walls
     [SerializeField] private float wallCollisionRedirectSpeed;  // How fast driving into a wall will turn you
-    private bool carCollidingWithWall;  // If the car is currently touching a wall
+    [SerializeField] private AnimationCurve wallBouncebackAngle;  // X-Angle you hit the wall (0-Paralell, 1-Head On), Y-Bounceback
+    [SerializeField] private float wallBouncebackPower;  // How much hitting the wall head on will bounce the player backwards
+    private float wallAngle;  // The angle at which the car is facing a wall if there is one
 
     [Header("Car Rotation")]
     [SerializeField] private float carRotationMaxX = 60f;  // The car's maximum X rotation
@@ -189,17 +192,19 @@ public class ACarController : MonoBehaviour
         rb.centerOfMass = new Vector3(x, -0.25f, z); // Lower the center of mass.
     }
 
-    private void OnCollisionStay(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
         if (collision == null) return;
-        if (wallDetectionLayer.Contains(collision.gameObject.layer))
+        if (wallDetectionLayer.Contains(collision.gameObject.layer))  // When driving into a wall
         {
-            Debug.Log("hit " + collision.gameObject.name);
+            WallBounceback(collision);
         }
     }
 
     private void WallDetection()
     {
+        wallAngle = 0;
+
         float carSpeed = Mathf.Max(Mathf.Abs(carVelocityRatio), Mathf.Abs(moveInput));
         if (carSpeed <= 0.1f) return;  // If the car is not actually moving then don't redirect
 
@@ -239,9 +244,19 @@ public class ACarController : MonoBehaviour
         float turnAmount = (closerDist / wallDetectionDistance);
         if (!lCloser) turnAmount *= -1;
 
-        float hitAngle = (Vector3.Angle(lCloser ? lRayPoint.forward : rRayPoint.forward, lCloser ? lHit.normal : rHit.normal) - 90) / 90;  // 1 for head on, 0 for parallel
+        wallAngle = (Vector3.Angle(lCloser ? lRayPoint.forward : rRayPoint.forward, lCloser ? lHit.normal : rHit.normal) - 90) / 90;  // 1 for head on, 0 for parallel
 
-        rb.AddRelativeTorque(steerStrength * turnAmount * hitAngle * transform.up, ForceMode.Acceleration);
+        rb.AddRelativeTorque(wallCollisionRedirectSpeed * turnAmount * wallAngle * transform.up, ForceMode.Acceleration);
+    }
+
+    void WallBounceback(Collision collision)  // When driving into a wall head-on
+    {
+        float bounceback = wallBouncebackAngle.Evaluate(wallAngle);
+        if (bounceback > 0.1f)
+        {
+            Debug.Log("hit " + collision.gameObject.name + "  -  Hit angle-" + bounceback + "  -  Bounceback Force-" + bounceback * wallBouncebackPower * carVelocityRatio);
+            rb.AddForce(bounceback * wallBouncebackPower * carVelocityRatio * -rb.transform.forward, ForceMode.Impulse);
+        }
     }
 
     private void UpdateDebugStats()
