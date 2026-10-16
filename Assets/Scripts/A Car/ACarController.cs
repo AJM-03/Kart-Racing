@@ -69,10 +69,11 @@ public class ACarController : MonoBehaviour
 
     [Header("Drifting")]
     [SerializeField, Range(0f, 1f)] private float minVelocityRatioToDrift = 0.2f;  // How fast you must be going in comparison to top speed in order to drift
-    [SerializeField, Range(1f, 3f)] private float driftSharpTurn = 2;  // How wide you can drift
+    [SerializeField, Range(1f, 2.5f)] private float driftSharpTurn = 2;  // How wide you can drift
     [SerializeField, Range(0, 1.5f)] private float driftWideTurn = 0;  // How tight you can drift
-    [SerializeField, Range(1f, 3f)] private float brakeDriftSharpTurn = 2;  // How wide you can brake drift
+    [SerializeField, Range(1.5f, 3f)] private float brakeDriftSharpTurn = 2;  // How wide you can brake drift
     [SerializeField, Range(0, 1.5f)] private float brakeDriftWideTurn = 0;  // How tight you can brake drift
+    [SerializeField] private AnimationCurve driftControlCurve;  // How tight you turn with input, from sharp to wide
     private bool isDrifting = false;  // Whether the car is drifting or not
     private int driftDirection;  // Which way the car is drifting (-1 = Left, 1 = Right)
     private float driftControl;  // How tightly you are drifting
@@ -359,10 +360,11 @@ public class ACarController : MonoBehaviour
 
         if (isDrifting)
         {
-            if (Input.GetButton("Fire2")) // Brake Drifting
-                driftControl = (driftDirection == 1) ? ExtensionMethods.Remap(steerInput, -1, 1, brakeDriftWideTurn, brakeDriftSharpTurn) : ExtensionMethods.Remap(steerInput, -1, 1, brakeDriftSharpTurn, brakeDriftWideTurn);
+            float driftControlInput = driftControlCurve.Evaluate(steerInput) * driftDirection;
+            if (Input.GetButton("Fire1")) // Brake Drifting
+                driftControl = ExtensionMethods.Remap(driftControlInput, -1, 1, brakeDriftWideTurn, brakeDriftSharpTurn);
             else  // Standard Drifting
-                driftControl = (driftDirection == 1) ? ExtensionMethods.Remap(steerInput, -1, 1, driftWideTurn, driftSharpTurn) : ExtensionMethods.Remap(steerInput, -1, 1, driftSharpTurn, driftWideTurn);
+                driftControl = ExtensionMethods.Remap(driftControlInput, -1, 1, driftWideTurn, driftSharpTurn);
         }
     }
 

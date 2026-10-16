@@ -640,7 +640,7 @@ GameObject:
   - component: {fileID: 34347960}
   - component: {fileID: 34347959}
   - component: {fileID: 34347958}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Wall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -745,7 +745,7 @@ GameObject:
   - component: {fileID: 35363608}
   - component: {fileID: 35363607}
   - component: {fileID: 35363606}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Wall (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4856,10 +4856,34 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   minVelocityRatioToDrift: 0.2
-  driftSharpTurn: 1.5
-  driftWideTurn: 0.45
+  driftSharpTurn: 1
+  driftWideTurn: 0.4
   brakeDriftSharpTurn: 2.2
   brakeDriftWideTurn: 1
+  driftControlCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -1
+      value: -1
+      inSlope: 0.10964509
+      outSlope: 0.10964509
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.07915568
+    - serializedVersion: 3
+      time: 1
+      value: 1.0047694
+      inSlope: 2.9061573
+      outSlope: 2.9061573
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.056728244
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   wallDetectionLayer:
     serializedVersion: 2
     m_Bits: 2147484535
@@ -5106,7 +5130,7 @@ GameObject:
   - component: {fileID: 377186170}
   - component: {fileID: 377186169}
   - component: {fileID: 377186168}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14108,7 +14132,7 @@ MonoBehaviour:
   m_DistanceLimit: 0
   m_MinimumOcclusionTime: 0
   m_CameraRadius: 0.1
-  m_Strategy: 2
+  m_Strategy: 0
   m_MaximumEffort: 4
   m_SmoothingTime: 0
   m_Damping: 0
@@ -29232,7 +29256,7 @@ GameObject:
   - component: {fileID: 1885362344}
   - component: {fileID: 1885362343}
   - component: {fileID: 1885362342}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Wall (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30069,7 +30093,7 @@ GameObject:
   - component: {fileID: 1964266890}
   - component: {fileID: 1964266889}
   - component: {fileID: 1964266888}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Wall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30580,7 +30604,7 @@ GameObject:
   - component: {fileID: 2038581380}
   - component: {fileID: 2038581379}
   - component: {fileID: 2038581378}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Wall (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
