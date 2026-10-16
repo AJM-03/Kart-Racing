@@ -208,8 +208,17 @@ public class ACarController : MonoBehaviour
         float carSpeed = Mathf.Max(Mathf.Abs(carVelocityRatio), Mathf.Abs(moveInput));
         if (carSpeed <= 0.1f) return;  // If the car is not actually moving then don't redirect
 
-        Transform lRayPoint = rayPoints[0];
-        Transform rRayPoint = rayPoints[1];
+        Transform lRayPoint, rRayPoint;
+        if (carVelocityRatio >= 0.1f || moveInput > 0)  // If the car is driving forwards
+        {
+            lRayPoint = rayPoints[0];
+            rRayPoint = rayPoints[1];
+        }
+        else  // If the car is reversing
+        {
+            lRayPoint = rayPoints[3];
+            rRayPoint = rayPoints[2];
+        }
 
         RaycastHit lHit, rHit;
         bool lDidHit = Physics.Raycast(lRayPoint.position, lRayPoint.forward, out lHit, wallDetectionDistance, wallDetectionLayer, QueryTriggerInteraction.Ignore);
@@ -230,15 +239,11 @@ public class ACarController : MonoBehaviour
 
             Debug.DrawRay(mRayPoint, lRayPoint.forward * wallDetectionDistance, lDidHit ? Color.red : Color.green);
 
-            if (lDidHit) lDist = lHit.distance;  // Third ray will count as the left ray hitting
+            if (lDidHit) lDist = lHit.distance;  // Third ray will count as the left ray hitting, so will steer right
             if (lDist == Mathf.Infinity) return;
         }
 
-        if (lDidHit)
-        {
-            Debug.Log(Vector3.Angle(lRayPoint.forward, lHit.normal) / 180);
-        }
-
+        // Figure out which direction the car should turn
         bool lCloser = lDist == Mathf.Min(lDist, rDist);
         float closerDist = lCloser ? lDist : rDist;
         float turnAmount = (closerDist / wallDetectionDistance);
@@ -246,7 +251,7 @@ public class ACarController : MonoBehaviour
 
         wallAngle = (Vector3.Angle(lCloser ? lRayPoint.forward : rRayPoint.forward, lCloser ? lHit.normal : rHit.normal) - 90) / 90;  // 1 for head on, 0 for parallel
 
-        rb.AddRelativeTorque(wallCollisionRedirectSpeed * turnAmount * wallAngle * transform.up, ForceMode.Acceleration);
+        rb.AddRelativeTorque(wallCollisionRedirectSpeed * turnAmount * wallAngle * transform.up, ForceMode.Acceleration);  // Turn the car to be parallel with the wall
     }
 
     void WallBounceback(Collision collision)  // When driving into a wall head-on
@@ -255,7 +260,7 @@ public class ACarController : MonoBehaviour
 
         if (collision.gameObject.TryGetComponent<BounceKartBack>(out BounceKartBack bounce)) bounceback = bounce.bouncePower;
 
-        if (bounceback > 0.1f)
+        if (carVelocityRatio > 0 && bounceback > 0.1f)
         {
             Debug.Log("hit " + collision.gameObject.name + "  -  Hit angle-" + bounceback + "  -  Bounceback Force-" + bounceback * wallBouncebackPower * carVelocityRatio);
             rb.AddForce(bounceback * wallBouncebackPower * carVelocityRatio * -rb.transform.forward, ForceMode.Impulse);
