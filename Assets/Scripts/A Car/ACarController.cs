@@ -252,6 +252,9 @@ public class ACarController : MonoBehaviour
     void WallBounceback(Collision collision)  // When driving into a wall head-on
     {
         float bounceback = wallBouncebackAngle.Evaluate(wallAngle);
+
+        if (collision.gameObject.TryGetComponent<BounceKartBack>(out BounceKartBack bounce)) bounceback = bounce.bouncePower;
+
         if (bounceback > 0.1f)
         {
             Debug.Log("hit " + collision.gameObject.name + "  -  Hit angle-" + bounceback + "  -  Bounceback Force-" + bounceback * wallBouncebackPower * carVelocityRatio);
