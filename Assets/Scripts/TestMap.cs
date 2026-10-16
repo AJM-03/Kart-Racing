@@ -26,7 +26,7 @@ public class TestMap : MonoBehaviour
     private void Teleport(int i)
     {
         car.SetActive(false);
-        car.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        car.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         car.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         car.transform.position = teleportPoints[i].transform.position;
         car.transform.rotation = teleportPoints[i].transform.rotation;

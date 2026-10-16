@@ -8,7 +8,7 @@ public class HTestPhysicsBullet : NetworkBehaviour
     public void Init(Vector3 forward)
     {
         lifetime = TickTimer.CreateFromSeconds(Runner, 5f);
-        GetComponent<Rigidbody>().velocity = forward;
+        GetComponent<Rigidbody>().linearVelocity = forward;
     }
 
     public override void Spawned()

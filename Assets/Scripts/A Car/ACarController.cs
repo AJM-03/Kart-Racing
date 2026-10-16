@@ -171,7 +171,7 @@ public class ACarController : MonoBehaviour
 
     private void CalculateCarVelocity()
     {
-        currentCarLocalVelocity = transform.InverseTransformDirection(rb.velocity).Round(2);
+        currentCarLocalVelocity = transform.InverseTransformDirection(rb.linearVelocity).Round(2);
 
         if (currentCarLocalVelocity.z >= 0) carVelocityRatio = currentCarLocalVelocity.z / maxSpeed;
         else carVelocityRatio = currentCarLocalVelocity.z / maxReverseSpeed;
@@ -399,7 +399,7 @@ public class ACarController : MonoBehaviour
     {     
         Vector3 currentRotation = transform.localEulerAngles;
 
-        // Convert Unity's 0–360 range to -180–180 for easier clamping
+        // Convert Unity's 0ï¿½360 range to -180ï¿½180 for easier clamping
         currentRotation.x = currentRotation.x.NormalizeAngle();
         currentRotation.z = currentRotation.z.NormalizeAngle();
 
@@ -444,7 +444,7 @@ public class ACarController : MonoBehaviour
             Vector3 surfaceNormal = hit.normal;  // Get the surface normal
             float slopeAngle = Vector3.Angle(surfaceNormal, Vector3.up);  // Calculate slope angle relative to world up
             Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, surfaceNormal), surfaceNormal).normalized; // Get slope direction(downhill vector)
-            Debug.Log($"Slope Angle: {slopeAngle:F2}° | Slope Direction: {slopeDirection}");
+            Debug.Log($"Slope Angle: {slopeAngle:F2}ï¿½ | Slope Direction: {slopeDirection}");
 
 
             if (didHit && slopeAngle <= driveableSlopeLimt)  // If the wheel is on something it can drive on

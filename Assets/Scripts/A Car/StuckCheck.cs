@@ -32,7 +32,7 @@ public class StuckCheck : MonoBehaviour
         input.y = Input.GetAxis("Fire2");
 
         // If the player is trying to move and their velocity is near zero, they are stuck
-        if (rb.velocity.magnitude < velocityThreshold && input != Vector2.zero)
+        if (rb.linearVelocity.magnitude < velocityThreshold && input != Vector2.zero)
         {
             // Increment the stuck time
             stuckTime += Time.deltaTime;

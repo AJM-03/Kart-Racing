@@ -37,7 +37,7 @@ public static class ExtensionMethods
     }
 
 
-    // Converts angles from 0–360 to -180–180
+    // Converts angles from 0ï¿½360 to -180ï¿½180
     public static float NormalizeAngle(this float angle)
     {
         if (angle > 180f) angle -= 360f;
@@ -239,7 +239,7 @@ public static class ExtensionMethods
     // Change the current direction of a rigidbody while keeping it's direction
     public static void ChangeDirection(this Rigidbody rb, Vector3 direction)
     {
-        rb.velocity = direction.normalized * rb.velocity.magnitude;
+        rb.linearVelocity = direction.normalized * rb.linearVelocity.magnitude;
     }
 
 
@@ -247,7 +247,7 @@ public static class ExtensionMethods
     // Stop a rigidbody from moving
     public static void Stop(this Rigidbody rb)
     {
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
     }
 
@@ -257,7 +257,7 @@ public static class ExtensionMethods
     public static void MoveTowards(this Rigidbody rb, Vector3 targetPosition, float speed)
     {
         Vector3 direction = (targetPosition - rb.position).normalized;
-        rb.velocity = direction * speed;
+        rb.linearVelocity = direction * speed;
     }
 
 
