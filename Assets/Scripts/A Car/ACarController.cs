@@ -200,6 +200,9 @@ public class ACarController : MonoBehaviour
 
     private void WallDetection()
     {
+        float carSpeed = Mathf.Max(Mathf.Abs(carVelocityRatio), Mathf.Abs(moveInput));
+        if (carSpeed <= 0.1f) return;  // If the car is not actually moving then don't redirect
+
         Transform lRayPoint = rayPoints[0];
         Transform rRayPoint = rayPoints[1];
 
@@ -236,7 +239,6 @@ public class ACarController : MonoBehaviour
         float turnAmount = (closerDist / wallDetectionDistance);
         if (!lCloser) turnAmount *= -1;
 
-        float carSpeed = Mathf.Max(carVelocityRatio, moveInput);
         float hitAngle = (Vector3.Angle(lCloser ? lRayPoint.forward : rRayPoint.forward, lCloser ? lHit.normal : rHit.normal) - 90) / 90;  // 1 for head on, 0 for parallel
 
         rb.AddRelativeTorque(steerStrength * turnAmount * hitAngle * transform.up, ForceMode.Acceleration);
