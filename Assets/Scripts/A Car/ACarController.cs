@@ -379,7 +379,7 @@ public class ACarController : MonoBehaviour
 
 
         // Steering Swing
-        if (steerSwingStrength != 0)
+        if (steerSwingStrength != 0 && isGrounded)
         {
             float swingAmount = steerSwingStrength;
             if (!isDrifting)
@@ -507,8 +507,8 @@ public class ACarController : MonoBehaviour
 
         // Tilt
         float targetTilt = Mathf.Lerp(0, maxDriftModelTiltAngle, y) * (isDrifting ? driftDirection : steerInput);
-        if (isDrifting && !isBraking) targetTilt /= 2f;
-        if (!isDrifting) targetTilt /= 2.5f;
+        if (isDrifting && !isBraking) targetTilt /= 4f;  // If standard drifting
+        if (!isDrifting) targetTilt /= 3f;  // If not drifting
 
         targetCarRotation = Quaternion.Euler(new Vector3(0, targetTurn, targetTilt)); 
 

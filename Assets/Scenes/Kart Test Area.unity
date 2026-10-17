@@ -5284,7 +5284,7 @@ MonoBehaviour:
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 0.7
+      value: 0.25
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -5391,7 +5391,7 @@ MonoBehaviour:
   minSideSkidVelocity: 12.5
   modelRotationSpeed: 3.75
   maxDriftModelTurnAngle: 80
-  maxDriftModelTiltAngle: 30
+  maxDriftModelTiltAngle: 60
   skidMarks:
   - {fileID: 493496023}
   - {fileID: 1619725616}
