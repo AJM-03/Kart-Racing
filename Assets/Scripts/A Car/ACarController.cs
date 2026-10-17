@@ -74,6 +74,7 @@ public class ACarController : MonoBehaviour
     [SerializeField, Range(1.5f, 3f)] private float brakeDriftSharpTurn = 2;  // How wide you can brake drift
     [SerializeField, Range(0, 1.5f)] private float brakeDriftWideTurn = 0;  // How tight you can brake drift
     [SerializeField] private AnimationCurve driftControlCurve;  // How tight you turn with input, from sharp to wide
+    [SerializeField] private AnimationCurve driftSwingCurve;  // The sideways force that will be applied to the car during a drift
     private bool isDrifting = false;  // Whether the car is drifting or not
     private int driftDirection;  // Which way the car is drifting (-1 = Left, 1 = Right)
     private float driftControl;  // How tightly you are drifting
@@ -381,8 +382,17 @@ public class ACarController : MonoBehaviour
         if (steerSwingStrength != 0)
         {
             float swingAmount = steerSwingStrength;
-            if (!isDrifting) swingAmount *= steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by when not drifting
-            else             swingAmount *= steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio));
+            if (!isDrifting)
+            {
+                swingAmount *= steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by when not drifting
+                if (steerInput != 0) Debug.Log(steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime));
+
+            }
+            else
+            {
+                swingAmount *= driftSwingCurve.Evaluate(driftControl);
+                Debug.Log(driftControl + "  -  " + driftSwingCurve.Evaluate(driftControl) + "  -  " + steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * driftSwingCurve.Evaluate(driftControl)));
+            }
 
             if (isReversing) swingAmount = 0;  // Don't swing if reversing
             if ((!isDrifting && steerInput > 0) || (isDrifting && driftDirection > 0)) swingAmount *= -1;  // Flip the force if steering right
@@ -444,7 +454,7 @@ public class ACarController : MonoBehaviour
             Vector3 surfaceNormal = hit.normal;  // Get the surface normal
             float slopeAngle = Vector3.Angle(surfaceNormal, Vector3.up);  // Calculate slope angle relative to world up
             Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, surfaceNormal), surfaceNormal).normalized; // Get slope direction(downhill vector)
-            Debug.Log($"Slope Angle: {slopeAngle:F2}� | Slope Direction: {slopeDirection}");
+            if (slopeAngle != 0) Debug.Log($"Slope Angle: {slopeAngle:F2}� | Slope Direction: {slopeDirection}");
 
 
             if (didHit && slopeAngle <= driveableSlopeLimt)  // If the wheel is on something it can drive on

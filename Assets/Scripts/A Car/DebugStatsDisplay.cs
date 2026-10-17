@@ -20,7 +20,7 @@ Player: {i + 1}
 MoveInput: {DebugStats.carStats[i].moveInput}
 SteerInput: {DebugStats.carStats[i].steerInput}
 Braking: {DebugStats.carStats[i].braking}
-CurrentCarVelocity: {DebugStats.carStats[i].currentCarLocalVelocity}
+CurrentCarVelocity: {DebugStats.carStats[i].currentCarLocalVelocity} ~ {DebugStats.carStats[i].currentCarLocalVelocity.magnitude.Round(2)}
 CarVelocityRatio: {DebugStats.carStats[i].carVelocityRatio:F2}
 GroundedWheels: {DebugStats.carStats[i].groundedWheels}
                 ";
