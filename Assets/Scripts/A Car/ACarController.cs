@@ -360,7 +360,7 @@ public class ACarController : MonoBehaviour
 
         if (isDrifting)
         {
-            float driftControlInput = driftControlCurve.Evaluate(steerInput) * driftDirection;
+            float driftControlInput = driftControlCurve.Evaluate(driftDirection == 1 ? steerInput : -steerInput);
             if (Input.GetButton("Fire1")) // Brake Drifting
                 driftControl = ExtensionMethods.Remap(driftControlInput, -1, 1, brakeDriftWideTurn, brakeDriftSharpTurn);
             else  // Standard Drifting
