@@ -8260,7 +8260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 2.452921, z: -9.832541}
+  m_FollowOffset: {x: 0, y: 2.45246, z: -9.834846}
   m_XDamping: 0.1
   m_YDamping: 0
   m_ZDamping: 0
@@ -15264,7 +15264,7 @@ Transform:
   m_GameObject: {fileID: 911887035}
   serializedVersion: 2
   m_LocalRotation: {x: 0.02009522, y: -0.000000030028186, z: 6.035448e-10, w: 0.99979806}
-  m_LocalPosition: {x: 0, y: 2.452921, z: -9.832541}
+  m_LocalPosition: {x: 0, y: 2.45246, z: -9.834846}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15323,7 +15323,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 283042086}
   m_Follow: {fileID: 361591346}
   m_Lens:
-    FieldOfView: 55.67499
+    FieldOfView: 55.67868
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 2000
@@ -21602,7 +21602,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 2000
-  field of view: 55.67499
+  field of view: 55.67868
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
