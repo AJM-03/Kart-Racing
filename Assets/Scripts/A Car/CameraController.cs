@@ -3,15 +3,30 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    [Header("References")]
+    public ACarController car;
     private CinemachineVirtualCamera cam;
     private CinemachineTransposer transposer;
-    public ACarController car;
 
+
+    [Header("Damping")]
+    public float offsetDampingSpeed;
+
+    [Header("Starting & Target Values")]
     private Vector3 stationaryCamOffset;
-    public Vector3 topSpeedOffsetChange;
+    private Vector3 targetOffset;
     private float stationaryCamFOV;
-    public float topSpeedFOVChange;
+    private float targetFOV;
+
+    [Header("Speed")]
     public AnimationCurve speedOffsetCurve;
+    public Vector3 topSpeedOffsetChange;
+    public float topSpeedFOVChange;
+
+    [Header("Braking")]
+    public AnimationCurve brakingOffsetCurve;
+    public Vector3 brakingOffsetChange;
+    public float brakingFOVChange;
 
 
     void Start()
@@ -25,12 +40,21 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        Vector3 offset = stationaryCamOffset;
-        offset += (topSpeedOffsetChange * speedOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
-        transposer.m_FollowOffset = offset;
+        targetOffset = stationaryCamOffset;
+        targetFOV = stationaryCamFOV;
 
-        float fov = stationaryCamFOV;
-        fov += (topSpeedFOVChange * speedOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
-        cam.m_Lens.FieldOfView = fov;
+        if (car.isBraking)  // If braking
+        {
+            targetOffset += (brakingOffsetChange * brakingOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
+            targetFOV += (brakingFOVChange * brakingOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
+        }
+        else  // If driving
+        {
+            targetOffset += (topSpeedOffsetChange * speedOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
+            targetFOV += (topSpeedFOVChange * speedOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
+        }
+
+        transposer.m_FollowOffset = Vector3.Lerp(transposer.m_FollowOffset, targetOffset, offsetDampingSpeed * Time.deltaTime);
+        cam.m_Lens.FieldOfView = Mathf.Lerp(cam.m_Lens.FieldOfView, targetFOV, offsetDampingSpeed * Time.deltaTime);
     }
 }

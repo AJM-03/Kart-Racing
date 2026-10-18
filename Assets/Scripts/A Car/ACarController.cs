@@ -47,7 +47,7 @@ public class ACarController : MonoBehaviour
     [Header("Braking")]
     [SerializeField] private float brakingDeceleration = 100f;  // How quickly you decelerate whilst braking
     [SerializeField] private float brakingDragCoefficient = 0.5f;  // Side force preventing the car from sliding whilst braking
-    private bool isBraking = false;  // Whether the player is braking or not
+    [HideInInspector] public bool isBraking = false;  // Whether the player is braking or not
 
     [Header("Reversing")]
     [SerializeField] private float reverseAcceleration = 15f;  // Acceleration whilst reversing
