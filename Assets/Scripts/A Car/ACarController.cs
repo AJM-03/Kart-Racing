@@ -588,6 +588,8 @@ public class ACarController : MonoBehaviour
         if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = turnAmount * carVelocityRatio * (isDrifting ? driftCameraHeadingChange : cameraHeadingChange);
     }
     #endregion
+
+    public float GetCarVelocityRatio() { return carVelocityRatio; }
 }
 
 

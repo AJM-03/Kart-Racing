@@ -8260,7 +8260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 2.5, z: -9}
+  m_FollowOffset: {x: 0, y: 2.452921, z: -9.832541}
   m_XDamping: 0.1
   m_YDamping: 0
   m_ZDamping: 0
@@ -15247,6 +15247,7 @@ GameObject:
   - component: {fileID: 911887036}
   - component: {fileID: 911887038}
   - component: {fileID: 911887037}
+  - component: {fileID: 911887039}
   m_Layer: 7
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -15262,8 +15263,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 911887035}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.023948694, y: -3.516178e-13, z: 8.423202e-15, w: 0.99971324}
-  m_LocalPosition: {x: 0, y: 2.5, z: -9}
+  m_LocalRotation: {x: 0.02009522, y: -0.000000030028186, z: 6.035448e-10, w: 0.99979806}
+  m_LocalPosition: {x: 0, y: 2.452921, z: -9.832541}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15322,7 +15323,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 283042086}
   m_Follow: {fileID: 361591346}
   m_Lens:
-    FieldOfView: 55
+    FieldOfView: 55.67499
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 2000
@@ -15340,6 +15341,54 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 516693264}
+--- !u!114 &911887039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 911887035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b83f3a7b5a88efd4a927bbb5f343b267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraController
+  car: {fileID: 361591345}
+  topSpeedOffsetChange: {x: 0, y: -0.25, z: -1.25}
+  topSpeedFOVChange: 2
+  speedOffsetCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.2
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &912345469
 GameObject:
   m_ObjectHideFlags: 0
@@ -21553,7 +21602,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 2000
-  field of view: 55
+  field of view: 55.67499
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
