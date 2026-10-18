@@ -382,13 +382,10 @@ public class ACarController : MonoBehaviour
             if (!isDrifting)
             {
                 swingAmount *= steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by when not drifting
-                if (steerInput != 0) Debug.Log(steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(steerInput)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime));
-
             }
             else
             {
                 swingAmount *= driftSwingCurve.Evaluate(driftControl);
-                Debug.Log(driftControl + "  -  " + driftSwingCurve.Evaluate(driftControl) + "  -  " + steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * driftSwingCurve.Evaluate(driftControl)));
             }
 
             if (isReversing) swingAmount = 0;  // Don't swing if reversing
