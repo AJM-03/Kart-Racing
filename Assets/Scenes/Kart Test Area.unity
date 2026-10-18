@@ -4074,7 +4074,7 @@ Transform:
   m_GameObject: {fileID: 283042085}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 1.43}
+  m_LocalPosition: {x: 0, y: 2, z: 1.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5050,7 +5050,6 @@ MonoBehaviour:
   dragCoefficient: 15
   brakingDeceleration: 30
   brakingDragCoefficient: 50
-  isBraking: 0
   reverseAcceleration: 40
   maxReverseSpeed: 7.5
   reverseAccelerationCurve:
@@ -5199,7 +5198,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   minVelocityRatioToDrift: 0.2
   driftSharpTurn: 1
-  driftWideTurn: 0.1
+  driftWideTurn: 0.2
   brakeDriftSharpTurn: 2.2
   brakeDriftWideTurn: 1
   driftControlCurve:
@@ -5398,8 +5397,6 @@ MonoBehaviour:
   - {fileID: 1619725616}
   - {fileID: 1251675461}
   - {fileID: 1822216229}
-  cameraHeadingChange: 0
-  driftCameraHeadingChange: 0.75
   tireSuspensionMoveSpeed: 0.01
   wheelRays: 1
 --- !u!4 &361591346
@@ -15264,7 +15261,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 911887035}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.023948696, y: -0.00000002979378, z: 7.137268e-10, w: 0.99971324}
+  m_LocalRotation: {x: 0.023948692, y: -0.000000014225422, z: 3.4077796e-10, w: 0.99971324}
   m_LocalPosition: {x: 0, y: 2.5, z: -9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -15399,7 +15396,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   topSpeedOffsetChange: {x: 0, y: -0.25, z: -1.25}
-  topSpeedFOVChange: 0.1
+  topSpeedFOVChange: 5
   brakingOffsetCurve:
     serializedVersion: 2
     m_Curve:
@@ -15444,6 +15441,10 @@ MonoBehaviour:
     m_RotationOrder: 4
   brakingOffsetChange: {x: 0, y: 0, z: 2}
   brakingFOVChange: -5
+  driftingOffsetChange: {x: -2, y: 0, z: 0.5}
+  lookAtOffsetChange: {x: 0.25, y: 0, z: -1.4}
+  cameraHeadingChange: 0
+  driftCameraHeadingChange: 0.75
 --- !u!1 &912345469
 GameObject:
   m_ObjectHideFlags: 0

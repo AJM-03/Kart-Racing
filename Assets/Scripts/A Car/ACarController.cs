@@ -47,7 +47,7 @@ public class ACarController : MonoBehaviour
     [Header("Braking")]
     [SerializeField] private float brakingDeceleration = 100f;  // How quickly you decelerate whilst braking
     [SerializeField] private float brakingDragCoefficient = 0.5f;  // Side force preventing the car from sliding whilst braking
-    [HideInInspector] public bool isBraking = false;  // Whether the player is braking or not
+    private bool isBraking = false;  // Whether the player is braking or not
 
     [Header("Reversing")]
     [SerializeField] private float reverseAcceleration = 15f;  // Acceleration whilst reversing
@@ -103,8 +103,6 @@ public class ACarController : MonoBehaviour
     [SerializeField, Range(0, 160)] private float maxDriftModelTurnAngle = 30f;  // How far the car will turn when sharply brake drifting
     [SerializeField, Range(0, 160)] private float maxDriftModelTiltAngle = 30f;  // How far the car will turn when sharply brake drifting
     [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];  // The four skid mark trail renderers
-    [SerializeField, Range(0f, 5f)] private float cameraHeadingChange = 0.75f;  // How far the camera will move left and right when steering
-    [SerializeField, Range(0f, 5f)] private float driftCameraHeadingChange = 0.75f;  // How far the camera will move left and right when drifting
     [SerializeField] private float tireSuspensionMoveSpeed = 0.01f;  // How quickly the tires move up and down with the terrain
     private Vector3[] tirePositions = new Vector3[4];  // The starting positions for each tire
     private Quaternion targetCarRotation;  // The rotation that the car wants to reach
@@ -131,7 +129,6 @@ public class ACarController : MonoBehaviour
         GetPlayerInput();
         Drift();
         UpdateDebugStats();
-        CameraMovement();
     }
 
     private void FixedUpdate()
@@ -362,7 +359,7 @@ public class ACarController : MonoBehaviour
         if (isDrifting)
         {
             float driftControlInput = driftControlCurve.Evaluate(driftDirection == 1 ? steerInput : -steerInput);
-            if (Input.GetButton("Fire1")) // Brake Drifting
+            if (IsBrakeDrifting()) // Brake Drifting
                 driftControl = ExtensionMethods.Remap(driftControlInput, -1, 1, brakeDriftWideTurn, brakeDriftSharpTurn);
             else  // Standard Drifting
                 driftControl = ExtensionMethods.Remap(driftControlInput, -1, 1, driftWideTurn, driftSharpTurn);
@@ -578,18 +575,21 @@ public class ACarController : MonoBehaviour
     }
 
     private void ToggleSkidMarks(bool toggle) { foreach (var skidMark in skidMarks) { skidMark.emitting = toggle; } }
-
-    private void CameraMovement()
-    {
-        var orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
-        float turnAmount = steerInput;
-        if (isDrifting) turnAmount = driftControl * driftDirection;
-        if (!isGrounded) turnAmount = 0;
-        if (orbitalTransposer != null) orbitalTransposer.m_Heading.m_Bias = turnAmount * carVelocityRatio * (isDrifting ? driftCameraHeadingChange : cameraHeadingChange);
-    }
     #endregion
 
+
+
+    #region References
     public float GetCarVelocityRatio() { return carVelocityRatio; }
+    public bool IsGrounded() { return isGrounded; }
+    public bool IsBraking() { return isBraking; }
+    public bool IsDrifting() { return isDrifting; }
+    public bool IsBrakeDrifting() { return isDrifting && Input.GetButton("Fire1"); }
+    public float GetSteerInput() { return steerInput; }
+    public float GetDriftDirection() { return driftDirection; }
+    public float GetDriftControl() { return driftControl; }
+
+    #endregion
 }
 
 
