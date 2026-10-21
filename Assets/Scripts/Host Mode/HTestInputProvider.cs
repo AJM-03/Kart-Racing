@@ -166,4 +166,9 @@ public class HTestInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     {
 
     }
+
+    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ReadOnlySpan<byte> data)
+    {
+
+    }
 }

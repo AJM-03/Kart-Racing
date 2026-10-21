@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.photonengine.fusion-inspector": "https://github.com/Photon-Server/Photon-UPM.git#fusion/v2/fusion-inspector",
     "com.unity.addressables": "2.10.3",
     "com.unity.cinemachine": "2.10.7",
     "com.unity.collab-proxy": "2.13.6",

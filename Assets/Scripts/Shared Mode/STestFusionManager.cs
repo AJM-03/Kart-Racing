@@ -229,11 +229,16 @@ public class STestFusionManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        Debug.Log("Server shutdown");
+        Debug.Log("Server shutdown " + shutdownReason.ToString());
 
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
+    {
+
+    }
+
+    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ReadOnlySpan<byte> data)
     {
 
     }

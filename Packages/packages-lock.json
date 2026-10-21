@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.photonengine.fusion-inspector": {
+      "version": "https://github.com/Photon-Server/Photon-UPM.git#fusion/v2/fusion-inspector",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "151b98fdba4affd5d3ce7a9510740c5fbe0535c5"
+    },
     "com.unity.addressables": {
       "version": "2.10.3",
       "depth": 0,

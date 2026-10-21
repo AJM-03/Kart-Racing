@@ -1,5 +1,4 @@
 using Fusion;
-using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ using UnityEngine.UI;
 public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner networkRunner;
-    private RunnerSimulatePhysics3D simulatePhysics3D;
+    //private RunnerSimulatePhysics3D simulatePhysics3D;
     [SerializeField] private NetworkPrefabRef playerPrefabRef;
 
     private Dictionary<PlayerRef, NetworkObject> spawnCharacter = new Dictionary<PlayerRef, NetworkObject> ();
@@ -66,10 +65,10 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
         networkRunner.ProvideInput = true;
 
-        if (simulatePhysics3D == null)
-        {
-            gameObject.AddComponent<RunnerSimulatePhysics3D>().ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateForward;
-        }
+        //if (simulatePhysics3D == null)
+        //{
+        //    gameObject.AddComponent<RunnerSimulatePhysics3D>().ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateForward;
+        //}
 
         // Get scene info
         var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
@@ -99,10 +98,10 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
         networkRunner.ProvideInput = true;
 
-        if (simulatePhysics3D == null)
-        {
-            gameObject.AddComponent<RunnerSimulatePhysics3D>().ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateForward;
-        }
+        //if (simulatePhysics3D == null)
+        //{
+        //    gameObject.AddComponent<RunnerSimulatePhysics3D>().ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateForward;
+        //}
 
 
         // Set session password
@@ -284,6 +283,11 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
     {
         
+    }
+
+    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ReadOnlySpan<byte> data)
+    {
+
     }
 }
 

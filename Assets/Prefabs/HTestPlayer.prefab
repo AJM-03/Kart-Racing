@@ -59,6 +59,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,9 +85,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &9046162717785613782
 CapsuleCollider:
@@ -156,12 +163,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SortKey: 1805167866
-  ObjectInterest: 1
-  Flags: 262145
+  SendPriority: 1
+  EnableInterpolation: 1
+  Flags: 262402
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: -2573079090990962620}
   - {fileID: 6732536121442659729}
+  ForceRemoteRenderTimeframe: 0
 --- !u!143 &-7358373612124075952
 CharacterController:
   m_ObjectHideFlags: 0
@@ -177,7 +186,6 @@ CharacterController:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -200,6 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 378411a89480da345945c2f888327a2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 0
   gravity: -20
   jumpImpulse: 8
   acceleration: 10
@@ -220,3 +229,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 85729569608210355, guid: 364f33ae625e0b44993cb1010a789575, type: 3}
   physicsBulletPrefab: {fileID: 3420572883635467966, guid: a4ff10822a93e134a8ed93eab6c98b0f, type: 3}
+  shootPos: {fileID: 0}
