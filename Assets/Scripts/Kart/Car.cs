@@ -3,7 +3,6 @@ using UnityEngine;
 public class Car : KartForm
 {
     [SerializeField] private Transform accelerationPoint;
-    [SerializeField] private Transform carModel;
     public Wheels wheels;
     public CarVisuals carVisuals;
     private KartController kart;
@@ -44,14 +43,10 @@ public class Car : KartForm
     [SerializeField, Range(0f, 1f)] private float minVelocityRatioToDrift = 0.2f;  // How fast you must be going in comparison to top speed in order to drift
     [SerializeField, Range(1f, 2.5f)] private float driftSharpTurn = 2;  // How wide you can drift
     [SerializeField, Range(0, 1.5f)] private float driftWideTurn = 0;  // How tight you can drift
-    [SerializeField, Range(1.5f, 3f)] private float brakeDriftSharpTurn = 2;  // How wide you can brake drift
+    [Range(1.5f, 3f)] public float brakeDriftSharpTurn = 2;  // How wide you can brake drift
     [SerializeField, Range(0, 1.5f)] private float brakeDriftWideTurn = 0;  // How tight you can brake drift
     [SerializeField] private AnimationCurve driftControlCurve;  // How tight you turn with input, from sharp to wide
     [SerializeField] private AnimationCurve driftSwingCurve;  // The sideways force that will be applied to the car during a drift
-    private bool isDrifting = false;  // Whether the car is drifting or not
-    private int driftDirection;  // Which way the car is drifting (-1 = Left, 1 = Right)
-    private float driftControl;  // How tightly you are drifting
-
 
 
 
@@ -77,8 +72,6 @@ public class Car : KartForm
     {
         wheels.Suspension();
         GroundCheck();
-        BrakeCheck();
-        WallDetection();
         Movement();
         carVisuals.SetVisuals();
     }
@@ -108,7 +101,7 @@ public class Car : KartForm
 
     private void Movement()
     {
-        if (kart.currentTerrainState == KartEnums.CurrentTerrainState.Land)
+        if (kart.IsGrounded())
         {
             Acceleration();
             Deceleration();
@@ -135,7 +128,7 @@ public class Car : KartForm
 
     private void Deceleration()
     {
-        bool isBraking = kart.isBraking && kart.currentTerrainState == KartEnums.CurrentTerrainState.Land;
+        bool isBraking = kart.IsBraking() && kart.IsGrounded();
         kart.rb.AddForce((isBraking ? brakingDeceleration : deceleration) * carVelocityRatio * -kart.rb.transform.forward, ForceMode.Acceleration);
     }
 
@@ -160,13 +153,13 @@ public class Car : KartForm
     {
         float currentSidewaysSpeed = currentCarLocalVelocity.x;
 
-        float dragMagnitude = -currentSidewaysSpeed * (isBraking ? brakingDragCoefficient : dragCoefficient);
+        float dragMagnitude = -currentSidewaysSpeed * (kart.IsBraking() ? brakingDragCoefficient : dragCoefficient);
 
         Vector3 dragForce = transform.right * dragMagnitude;
 
 
         // Steering Swing
-        if (steerSwingStrength != 0 && kart.currentTerrainState == KartEnums.CurrentTerrainState.Land)
+        if (steerSwingStrength != 0 && kart.IsGrounded())
         {
             float swingAmount = steerSwingStrength;
             if (!isDrifting)
@@ -208,7 +201,7 @@ public class Car : KartForm
         if (isDrifting)
         {
             float driftControlInput = driftControlCurve.Evaluate(driftDirection == 1 ? steerInput : -steerInput);
-            if (IsBrakeDrifting()) // Brake Drifting
+            if (kart.IsBrakeDrifting()) // Brake Drifting
                 driftControl = ExtensionMethods.Remap(driftControlInput, -1, 1, brakeDriftWideTurn, brakeDriftSharpTurn);
             else  // Standard Drifting
                 driftControl = ExtensionMethods.Remap(driftControlInput, -1, 1, driftWideTurn, driftSharpTurn);

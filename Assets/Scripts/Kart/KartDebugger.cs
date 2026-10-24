@@ -25,14 +25,14 @@ public class KartDebugger : MonoBehaviour
         }
 
         DebugStats.carStats[kart.playerNumber - 1].moveInput = kart.currentInput.Accelerate;
-        if (isDrifting) DebugStats.carStats[kart.playerNumber - 1].steerInput = driftControl * driftDirection;
+        if (kart.IsDrifting()) DebugStats.carStats[kart.playerNumber - 1].steerInput = kart.GetDriftControl() * kart.GetDriftDirection();
         else DebugStats.carStats[kart.playerNumber - 1].steerInput = kart.currentInput.Steer;
-        DebugStats.carStats[kart.playerNumber - 1].braking = isBraking;
-        DebugStats.carStats[kart.playerNumber - 1].currentCarLocalVelocity = kart.GetKartVelocity();
-        DebugStats.carStats[kart.playerNumber - 1].carVelocityRatio = kart.GetKartVelocityRatio();
+        DebugStats.carStats[kart.playerNumber - 1].braking = kart.IsBraking();
+        DebugStats.carStats[kart.playerNumber - 1].currentCarLocalVelocity = kart.GetVelocity();
+        DebugStats.carStats[kart.playerNumber - 1].carVelocityRatio = kart.GetVelocityRatio();
 
         int gW = 0;
-        for (int i = 0; i < groundedWheels.Length; i++) { gW += groundedWheels[i]; }
+        for (int i = 0; i < kart.car.wheels.groundedWheels.Length; i++) { gW += kart.car.wheels.groundedWheels[i]; }
         DebugStats.carStats[kart.playerNumber - 1].groundedWheels = gW;
     }
 }

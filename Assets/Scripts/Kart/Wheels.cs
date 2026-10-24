@@ -6,7 +6,7 @@ public class Wheels : MonoBehaviour
     [Header("References")]
     public Transform[] rayPoints;  // Where the wheel rays come from
     public GameObject[] tires = new GameObject[4];
-    [SerializeField] private GameObject[] frontTireParents = new GameObject[2];
+    public GameObject[] frontTireParents = new GameObject[2];
     private KartController kart;
 
     [Header("Suspension Settings")]
@@ -15,12 +15,14 @@ public class Wheels : MonoBehaviour
     [SerializeField] private float restLength = 0.375f;  // Standard length of a spring when not being compressed or stretched
     [SerializeField] private float springTravel = 0.2f;  // Max distance a spring can compress or extend from it's rest position
     [SerializeField] private float wheelRadius = 0.45f;  // The size of the wheel from center to bottom
-    private int[] groundedWheels = new int[4];  // How many wheels are currently touching the ground
+    [HideInInspector] public int[] groundedWheels = new int[4];  // How many wheels are currently touching the ground
 
     [Header("Surface Settings")]
     [SerializeField] private LayerMask driveableLayer;  // Layers that the car is able to drive on
     [SerializeField] private float driveableSlopeLimt = 46f;  // How steep a slope has to be to not be considered driveable
 
+
+    public Vector3[] tireHitPoints = new Vector3[4];
 
 
     void Start()
@@ -75,9 +77,9 @@ public class Wheels : MonoBehaviour
                 groundedWheels[i] = 0;
             }
 
-            // Visuals
-            if (visualHit.collider != null) SetTirePosition(tires[i], visualHit.point + rayPoints[i].up * wheelRadius, i);
-            else SetTirePosition(tires[i], tires[i].transform.parent.position, i);
+            // Used for tire visuals
+            if (visualHit.collider != null) tireHitPoints[i] = visualHit.point + rayPoints[i].up * wheelRadius;
+            else tireHitPoints[i] = tires[i].transform.parent.position;
         }
     }
 

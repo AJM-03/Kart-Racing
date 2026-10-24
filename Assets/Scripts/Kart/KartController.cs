@@ -46,7 +46,6 @@ public class KartController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        BrakeCheck();
         currentFormScript.CalculateKartVelocity();
         wallInteractions.WallDetection();
         currentFormScript.FixedUpdateKart();
@@ -80,8 +79,13 @@ public class KartController : MonoBehaviour
         rb.centerOfMass = new Vector3(x, -0.25f, z); // Lower the center of mass.
     }
 
-    private void BrakeCheck() { isBraking = (currentInput.Accelerate < 0 && GetKartVelocityRatio() > 0 && currentTerrainState == KartEnums.CurrentTerrainState.Land); }
-
-    public Vector3 GetKartVelocity() { return currentFormScript.currentCarLocalVelocity; }
-    public float GetKartVelocityRatio() { return currentFormScript.carVelocityRatio; }
+    public float GetVelocityRatio() { return currentFormScript.carVelocityRatio; }
+    public Vector3 GetVelocity() { return currentFormScript.currentCarLocalVelocity; }
+    public bool IsGrounded() { return currentTerrainState == KartEnums.CurrentTerrainState.Land; }
+    public bool IsInWater() { return currentTerrainState == KartEnums.CurrentTerrainState.Sea; }
+    public bool IsBraking() { return currentInput.Accelerate < 0 && GetVelocityRatio() > 0; }
+    public bool IsDrifting() { return currentFormScript.isDrifting; }
+    public bool IsBrakeDrifting() { return currentFormScript.isDrifting && IsBraking(); }
+    public float GetDriftDirection() { return currentFormScript.driftDirection; }
+    public float GetDriftControl() { return currentFormScript.driftControl; }
 }

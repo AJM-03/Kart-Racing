@@ -34,11 +34,11 @@ public class KartWallInteractions : MonoBehaviour
     {
         wallAngle = 0;
 
-        float carSpeed = Mathf.Max(Mathf.Abs(kart.GetKartVelocityRatio()), Mathf.Abs(kart.currentInput.Accelerate));
+        float carSpeed = Mathf.Max(Mathf.Abs(kart.GetVelocityRatio()), Mathf.Abs(kart.currentInput.Accelerate));
         if (carSpeed <= 0.1f) return;  // If the car is not actually moving then don't redirect
 
         Transform lRayPoint, rRayPoint;
-        if (kart.GetKartVelocityRatio() >= 0.1f || kart.currentInput.Accelerate > 0)  // If the car is driving forwards
+        if (kart.GetVelocityRatio() >= 0.1f || kart.currentInput.Accelerate > 0)  // If the car is driving forwards
         {
             lRayPoint = rayPoints[0];
             rRayPoint = rayPoints[1];
@@ -89,10 +89,10 @@ public class KartWallInteractions : MonoBehaviour
 
         if (collision.gameObject.TryGetComponent<BounceKartBack>(out BounceKartBack bounce)) bounceback = bounce.bouncePower;
 
-        if (kart.GetKartVelocityRatio() > 0 && bounceback > 0.1f)
+        if (kart.GetVelocityRatio() > 0 && bounceback > 0.1f)
         {
-            Debug.Log("hit " + collision.gameObject.name + "  -  Hit angle-" + bounceback + "  -  Bounceback Force-" + bounceback * wallBouncebackPower * kart.GetKartVelocityRatio());
-            kart.rb.AddForce(bounceback * wallBouncebackPower * kart.GetKartVelocityRatio() * -kart.rb.transform.forward, ForceMode.Impulse);
+            Debug.Log("hit " + collision.gameObject.name + "  -  Hit angle-" + bounceback + "  -  Bounceback Force-" + bounceback * wallBouncebackPower * kart.GetVelocityRatio());
+            kart.rb.AddForce(bounceback * wallBouncebackPower * kart.GetVelocityRatio() * -kart.rb.transform.forward, ForceMode.Impulse);
         }
     }
 }
