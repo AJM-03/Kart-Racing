@@ -1,6 +1,8 @@
 using UnityEngine;
-using System;
-using System.Collections;
+
+/* An abstract form of the kart input, will be overriden to allow different forms 
+ * of input such as from the local player, network player or AI
+*/
 
 public struct KartInputData
 {
@@ -17,6 +19,22 @@ public struct KartInputData
 public abstract class KartInput : MonoBehaviour
 {
     public KartInputData data;
+    private KartController kart;
 
-    public abstract KartInputData GetInput();
+
+    private void Start()
+    {
+        kart = GetComponentInParent<KartController>();
+        if (kart == null) Debug.LogError("Kart Controller not found by " + this);
+    }
+
+    public virtual KartInputData GetInput()
+    {
+        if (kart && kart.canMove == false)
+        {
+            data = new KartInputData();
+        }
+
+        return data;
+    }
 }

@@ -287,6 +287,14 @@ public class ACarController : MonoBehaviour
     }
     #endregion
 
+    #region Input Handling
+    private void GetPlayerInput()
+    {
+        moveInput = Input.GetButton("Fire2") ? 1 : (Input.GetButton("Fire1") ? -1 : 0);
+        steerInput = Input.GetAxis("Horizontal");
+    }
+    #endregion
+
     #region Movement
     private void Movement()
     {
