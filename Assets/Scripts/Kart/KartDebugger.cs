@@ -28,8 +28,8 @@ public class KartDebugger : MonoBehaviour
         if (isDrifting) DebugStats.carStats[kart.playerNumber - 1].steerInput = driftControl * driftDirection;
         else DebugStats.carStats[kart.playerNumber - 1].steerInput = kart.currentInput.Steer;
         DebugStats.carStats[kart.playerNumber - 1].braking = isBraking;
-        DebugStats.carStats[kart.playerNumber - 1].currentCarLocalVelocity = kart.currentCarLocalVelocity;
-        DebugStats.carStats[kart.playerNumber - 1].carVelocityRatio = kart.carVelocityRatio;
+        DebugStats.carStats[kart.playerNumber - 1].currentCarLocalVelocity = kart.GetKartVelocity();
+        DebugStats.carStats[kart.playerNumber - 1].carVelocityRatio = kart.GetKartVelocityRatio();
 
         int gW = 0;
         for (int i = 0; i < groundedWheels.Length; i++) { gW += groundedWheels[i]; }

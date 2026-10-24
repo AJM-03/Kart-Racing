@@ -4,8 +4,8 @@ using UnityEngine;
 public class Wheels : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Transform[] rayPoints;  // Where the wheel rays come from
-    [SerializeField] private GameObject[] tires = new GameObject[4];
+    public Transform[] rayPoints;  // Where the wheel rays come from
+    public GameObject[] tires = new GameObject[4];
     [SerializeField] private GameObject[] frontTireParents = new GameObject[2];
     private KartController kart;
 
@@ -27,6 +27,8 @@ public class Wheels : MonoBehaviour
     {
         kart = GetComponentInParent<KartController>();
         if (kart == null) Debug.LogError("Kart Controller not found by " + this);
+
+
     }
 
 

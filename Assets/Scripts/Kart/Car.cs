@@ -5,6 +5,7 @@ public class Car : KartForm
     [SerializeField] private Transform accelerationPoint;
     [SerializeField] private Transform carModel;
     public Wheels wheels;
+    public CarVisuals carVisuals;
     private KartController kart;
 
 
@@ -19,7 +20,7 @@ public class Car : KartForm
     [Header("Braking")]
     [SerializeField] private float brakingDeceleration = 100f;  // How quickly you decelerate whilst braking
     [SerializeField] private float brakingDragCoefficient = 0.5f;  // Side force preventing the car from sliding whilst braking
-    private bool isBraking = false;  // Whether the player is braking or not
+
 
     [Header("Reversing")]
     [SerializeField] private float reverseAcceleration = 15f;  // Acceleration whilst reversing
@@ -53,15 +54,9 @@ public class Car : KartForm
 
 
 
-    [Header("Wall Detection")]
-    [SerializeField] private LayerMask wallDetectionLayer;  // The layers that count as walls
-    [SerializeField] private float wallDetectionDistance = 3;  // How far away the car will detect walls
-    [SerializeField] private float wallCollisionRedirectSpeed;  // How fast driving into a wall will turn you
-    [SerializeField] private AnimationCurve wallBouncebackAngle;  // X-Angle you hit the wall (0-Paralell, 1-Head On), Y-Bounceback
-    [SerializeField] private float wallBouncebackPower;  // How much hitting the wall head on will bounce the player backwards
-    private float wallAngle;  // The angle at which the car is facing a wall if there is one
 
-    private float airTime;  // How long the car has been in the air
+
+    [HideInInspector] public float airTime;  // How long the car has been in the air
 
 
     void Start()
@@ -82,6 +77,10 @@ public class Car : KartForm
     {
         wheels.Suspension();
         GroundCheck();
+        BrakeCheck();
+        WallDetection();
+        Movement();
+        carVisuals.SetVisuals();
     }
 
 
@@ -95,14 +94,99 @@ public class Car : KartForm
 
     public override void CalculateKartVelocity()
     {
-        kart.currentCarLocalVelocity = transform.InverseTransformDirection(kart.rb.linearVelocity).Round(2);
+        currentCarLocalVelocity = transform.InverseTransformDirection(kart.rb.linearVelocity).Round(2);
 
-        if (kart.currentCarLocalVelocity.z >= 0) kart.carVelocityRatio = kart.currentCarLocalVelocity.z / maxSpeed;
-        else kart.carVelocityRatio = kart.currentCarLocalVelocity.z / maxReverseSpeed;
+        if (currentCarLocalVelocity.z >= 0) carVelocityRatio = currentCarLocalVelocity.z / maxSpeed;
+        else carVelocityRatio = currentCarLocalVelocity.z / maxReverseSpeed;
 
-        kart.carVelocityRatio = kart.carVelocityRatio.Round(2);
-        if (kart.carVelocityRatio >= 0.975) kart.carVelocityRatio = 1;
-        if (kart.carVelocityRatio <= -0.975) kart.carVelocityRatio = -1;
+        carVelocityRatio = carVelocityRatio.Round(2);
+        if (carVelocityRatio >= 0.975) carVelocityRatio = 1;
+        if (carVelocityRatio <= -0.975) carVelocityRatio = -1;
+    }
+
+
+
+    private void Movement()
+    {
+        if (kart.currentTerrainState == KartEnums.CurrentTerrainState.Land)
+        {
+            Acceleration();
+            Deceleration();
+            Turn();
+            SidewaysDrag();
+        }
+    }
+
+    private void Acceleration()
+    {
+        isReversing = (kart.currentInput.Accelerate < 0 && carVelocityRatio < 0);
+        if (Mathf.Abs(currentCarLocalVelocity.z) >= (!isReversing ? maxSpeed : maxReverseSpeed)) return;  // If we are already at our max speed then stop
+
+
+        Vector3 accelDirection = accelerationPoint.transform.forward;
+
+
+        float accel = acceleration * accelerationCurve.Evaluate(carVelocityRatio);
+        if (isReversing) accel = reverseAcceleration * reverseAccelerationCurve.Evaluate(carVelocityRatio);  // Reverse acceleration
+        accel *= kart.currentInput.Accelerate;  // Multiply by the player's input (1 fowards, -1 reverse)
+
+        kart.rb.AddForceAtPosition(accel * accelDirection, accelerationPoint.position, ForceMode.Acceleration);
+    }
+
+    private void Deceleration()
+    {
+        bool isBraking = kart.isBraking && kart.currentTerrainState == KartEnums.CurrentTerrainState.Land;
+        kart.rb.AddForce((isBraking ? brakingDeceleration : deceleration) * carVelocityRatio * -kart.rb.transform.forward, ForceMode.Acceleration);
+    }
+
+    private void Turn()
+    {
+        float turnAmount = kart.currentInput.Steer;
+
+        int newSteeringDirection = kart.currentInput.Steer > 0 ? 1 : -1;
+        if (turnAmount == 0 || steeringDirection != newSteeringDirection) steeringTime = 0;
+        else steeringTime += Time.fixedDeltaTime;
+        steeringDirection = newSteeringDirection;
+        //Debug.Log("Steering Time - " + steeringTime);
+        if (isDrifting)
+            turnAmount = driftControl * driftDirection;
+
+        kart.rb.AddRelativeTorque(steerStrength * turnAmount * turningCurve.Evaluate(Mathf.Abs(carVelocityRatio)) * Mathf.Sign(carVelocityRatio) * transform.up, ForceMode.Acceleration);
+    }
+
+
+
+    private void SidewaysDrag()
+    {
+        float currentSidewaysSpeed = currentCarLocalVelocity.x;
+
+        float dragMagnitude = -currentSidewaysSpeed * (isBraking ? brakingDragCoefficient : dragCoefficient);
+
+        Vector3 dragForce = transform.right * dragMagnitude;
+
+
+        // Steering Swing
+        if (steerSwingStrength != 0 && kart.currentTerrainState == KartEnums.CurrentTerrainState.Land)
+        {
+            float swingAmount = steerSwingStrength;
+            if (!isDrifting)
+            {
+                swingAmount *= steeringSwingCurve.Evaluate(Mathf.Abs(carVelocityRatio) * Mathf.Abs(kart.currentInput.Steer)) * steeringSwingTimeCurve.Evaluate(steeringTime / steerSwingTime);  // Calculate how much to swing out by when not drifting
+            }
+            else
+            {
+                swingAmount *= driftSwingCurve.Evaluate(driftControl);
+            }
+
+            if (isReversing) swingAmount = 0;  // Don't swing if reversing
+            if ((!isDrifting && kart.currentInput.Steer > 0) || (isDrifting && driftDirection > 0)) swingAmount *= -1;  // Flip the force if steering right
+
+            Vector3 swingForce = transform.right * swingAmount;
+            dragForce += swingForce;
+        }
+
+
+        kart.rb.AddForceAtPosition(dragForce, kart.rb.worldCenterOfMass, ForceMode.Acceleration);
     }
 
 
@@ -110,13 +194,13 @@ public class Car : KartForm
     {
         float steerInput = kart.currentInput.Steer;
 
-        if (Input.GetButtonDown("Jump") && !isDrifting && steerInput != 0 && kart.carVelocityRatio >= minVelocityRatioToDrift)  // Start Drifting
+        if (Input.GetButtonDown("Jump") && !isDrifting && steerInput != 0 && carVelocityRatio >= minVelocityRatioToDrift)  // Start Drifting
         {
             isDrifting = true;
             driftDirection = steerInput > 0 ? 1 : -1;
         }
 
-        if ((Input.GetButtonUp("Jump") || kart.carVelocityRatio < minVelocityRatioToDrift) && isDrifting)  // Stop Drifting
+        if ((Input.GetButtonUp("Jump") || carVelocityRatio < minVelocityRatioToDrift) && isDrifting)  // Stop Drifting
         {
             isDrifting = false;
         }
