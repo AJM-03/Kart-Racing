@@ -3,22 +3,27 @@ using UnityEngine;
 
 public class KartController : MonoBehaviour
 {
-    public KartEnums.CurrentTerrainState currentTerrainState;
-    public int playerNumber;
-    public bool canMove, canTransform;
+    [Header("Kart Info")]
+    public int racerIndex;  // A unique ID for each racer in the game
+    public int playerNumber;  // Represents what is controlling this racer 1-4=Local Player, 5=AI, 6=Network Player
+    public bool canMove, canTransform;  // Can be used to limit the player's abilities
+    public KartEnums.CurrentTerrainState currentTerrainState;  // The type of terrain the vehicle is currently on (Land, Sea, Sky)
+    public KartInputData currentInput;  // The current input values for this frame
 
-    [HideInInspector] public Rigidbody rb;
-    [SerializeField] private CinemachineVirtualCamera virtualCamera;
-    [SerializeField] private KartWallInteractions wallInteractions;
-    public KartInput inputSource;
-    public KartInputData currentInput;
-    private bool isBraking = false;  // Whether the player is braking or not
+
+    [Header("References")]
+    [HideInInspector] public Rigidbody rb;  // The kart's rigidBody component
+    [SerializeField] private CinemachineVirtualCamera virtualCamera;  // The main camera attached to the kart
+    [SerializeField] private KartWallInteractions wallInteractions;  // Detects and controls the kart's interactions with walls
+    [SerializeField] private KartInput inputSource;  // The script that the input should be coming from
 
 
     [Header("Kart Forms")]
-    public KartEnums.KartForm currentForm;
-    public KartForm currentFormScript;
-    public Car car;
+    public KartEnums.KartForm currentForm;  // The form that the kart is currently in
+    public KartForm currentFormScript;  // The script for the kart's current form
+    public Car car;  // The script for the car form
+
+
 
     void Awake()
     {
@@ -31,10 +36,12 @@ public class KartController : MonoBehaviour
         SetCenterOfMass();
     }
 
+
     private void Start()
     {
         if (playerNumber > 1) Destroy(virtualCamera.transform.GetChild(0).gameObject);
     }
+
 
 
     private void Update()
@@ -44,6 +51,7 @@ public class KartController : MonoBehaviour
     }
 
 
+
     private void FixedUpdate()
     {
         currentFormScript.CalculateKartVelocity();
@@ -51,7 +59,9 @@ public class KartController : MonoBehaviour
         currentFormScript.FixedUpdateKart();
     }
 
-    public void ChangeForm(KartEnums.KartForm targetForm, bool instant)
+
+
+    public void ChangeForm(KartEnums.KartForm targetForm, bool instant)  // Changes the current form of the kart
     {
         if (targetForm == currentForm) return;
         if (!canTransform) return;
@@ -67,7 +77,9 @@ public class KartController : MonoBehaviour
         currentFormScript.TransformInto(oldForm);
     }
 
-    private void SetCenterOfMass()
+
+
+    private void SetCenterOfMass()  // Initializes the kart's rigidbody by setting the centre of mass
     {
         float x = 0;
         float z = 0;
@@ -79,6 +91,9 @@ public class KartController : MonoBehaviour
         rb.centerOfMass = new Vector3(x, -0.25f, z); // Lower the center of mass.
     }
 
+
+
+    // Getters
     public float GetVelocityRatio() { return currentFormScript.carVelocityRatio; }
     public Vector3 GetVelocity() { return currentFormScript.currentCarLocalVelocity; }
     public bool IsGrounded() { return currentTerrainState == KartEnums.CurrentTerrainState.Land; }

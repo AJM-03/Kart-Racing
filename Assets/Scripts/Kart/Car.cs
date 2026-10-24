@@ -9,42 +9,43 @@ public class Car : KartForm
 
 
     [Header("Acceleration")]
-    [SerializeField] private float acceleration = 25f;  // The acceleration of the car
-    [SerializeField] private float maxSpeed = 100f;  // The top speed of the car
+    [SerializeField] private float acceleration = 50f;  // The acceleration of the car
+    [SerializeField] private float maxSpeed = 45f;  // The top speed of the car
     [SerializeField] private AnimationCurve accelerationCurve;  // The curve of how your car will reach top speed, using carVelocityRatio
-    [SerializeField] private float deceleration = 10f;  // How quickly the car will slow down
-    [SerializeField] private float dragCoefficient = 1f;  // Side force preventing the car from sliding
+    [SerializeField] private float deceleration = 15f;  // How quickly the car will slow down
+    [SerializeField] private float dragCoefficient = 15f;  // Side force preventing the car from sliding
     private bool isReversing;  // Whether the car is reversing or not
 
     [Header("Braking")]
-    [SerializeField] private float brakingDeceleration = 100f;  // How quickly you decelerate whilst braking
-    [SerializeField] private float brakingDragCoefficient = 0.5f;  // Side force preventing the car from sliding whilst braking
+    [SerializeField] private float brakingDeceleration = 30f;  // How quickly you decelerate whilst braking
+    [SerializeField] private float brakingDragCoefficient = 50f;  // Side force preventing the car from sliding whilst braking
 
 
     [Header("Reversing")]
-    [SerializeField] private float reverseAcceleration = 15f;  // Acceleration whilst reversing
-    [SerializeField] private float maxReverseSpeed = 20f;  // Top speed whilst reversing
+    [SerializeField] private float reverseAcceleration = 40f;  // Acceleration whilst reversing
+    [SerializeField] private float maxReverseSpeed = 7.5f;  // Top speed whilst reversing
     [SerializeField] private AnimationCurve reverseAccelerationCurve;  // The curve of how your car will reach top reverse speed, using carVelocityRatio
 
 
     [Header("Steering")]
-    [SerializeField] private float steerStrength = 15f;  // The car's handling
+    [SerializeField] private float steerStrength = 22f;  // The car's handling
     [SerializeField] private AnimationCurve turningCurve;  // Dynamically change turning strength based on the car's velocity
     private float steeringTime;  // How long the car has been steering in this direction
     private int steeringDirection;  // Which way the car is steering (-1 = Left, 1 = Right)
 
-    [SerializeField] private float steerSwingStrength = 5;  // How much the car will swing out when turning
+    [Header("Steering Swing")]
+    [SerializeField] private float steerSwingStrength = 175f;  // How much the car will swing out when turning
     [SerializeField] private AnimationCurve steeringSwingCurve;  // How far the car swings out based on velocity and steering strength
-    [SerializeField] private float steerSwingTime = 1;  // How long the swing will last
+    [SerializeField] private float steerSwingTime = 0.4f;  // How long the swing will last
     [SerializeField] private AnimationCurve steeringSwingTimeCurve;  // The strength of the swing over time
 
 
     [Header("Drifting")]
     [SerializeField, Range(0f, 1f)] private float minVelocityRatioToDrift = 0.2f;  // How fast you must be going in comparison to top speed in order to drift
-    [SerializeField, Range(1f, 2.5f)] private float driftSharpTurn = 2;  // How wide you can drift
-    [SerializeField, Range(0, 1.5f)] private float driftWideTurn = 0;  // How tight you can drift
-    [Range(1.5f, 3f)] public float brakeDriftSharpTurn = 2;  // How wide you can brake drift
-    [SerializeField, Range(0, 1.5f)] private float brakeDriftWideTurn = 0;  // How tight you can brake drift
+    [SerializeField, Range(1f, 2.5f)] private float driftSharpTurn = 1f;  // How wide you can drift
+    [SerializeField, Range(0, 1.5f)] private float driftWideTurn = 0.2f;  // How tight you can drift
+    [Range(1.5f, 3f)] public float brakeDriftSharpTurn = 2.2f;  // How wide you can brake drift
+    [SerializeField, Range(0, 1.5f)] private float brakeDriftWideTurn = 1f;  // How tight you can brake drift
     [SerializeField] private AnimationCurve driftControlCurve;  // How tight you turn with input, from sharp to wide
     [SerializeField] private AnimationCurve driftSwingCurve;  // The sideways force that will be applied to the car during a drift
 

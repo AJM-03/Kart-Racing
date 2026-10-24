@@ -12,15 +12,15 @@ public class CarVisuals : MonoBehaviour
     [SerializeField] private float carRotationMaxX = 60f;  // The car's maximum X rotation
     [SerializeField] private float carRotationMaxZ = 60f;  // The car's maximum Z rotation
     [SerializeField] private AnimationCurve airRotationCurve;  // How quickly the car returns to defualt rotation while in the air
-    [SerializeField, Range(0, 160)] private float maxDriftModelTurnAngle = 30f;  // How far the car will turn when sharply brake drifting
-    [SerializeField, Range(0, 160)] private float maxDriftModelTiltAngle = 30f;  // How far the car will turn when sharply brake drifting
+    [SerializeField, Range(0, 160)] private float maxDriftModelTurnAngle = 80f;  // How far the car will turn when sharply brake drifting
+    [SerializeField, Range(0, 160)] private float maxDriftModelTiltAngle = 60f;  // How far the car will turn when sharply brake drifting
 
 
     [Header("Wheels")]
     [SerializeField] private float tireRotSpeed = 3000f;  // How quickly tires will spin at maxSpeed
-    [SerializeField] private float maxTireSteeringAngle = 30f;  // How far the front tires will rotate when steering
-    [SerializeField] private float minSideSkidVelocity = 10f;  // How fast you need to be sliding for skid marks to appear on rear tires
-    [SerializeField, Range(0f, 5f)] private float modelRotationSpeed = 0.1f;  // How quickly the car model will rotate
+    [SerializeField] private float maxTireSteeringAngle = 40f;  // How far the front tires will rotate when steering
+    [SerializeField] private float minSideSkidVelocity = 12.5f;  // How fast you need to be sliding for skid marks to appear on rear tires
+    [SerializeField, Range(0f, 5f)] private float modelRotationSpeed = 3.75f;  // How quickly the car model will rotate
     [SerializeField] private TrailRenderer[] skidMarks = new TrailRenderer[4];  // The four skid mark trail renderers
     [SerializeField] private float tireSuspensionMoveSpeed = 0.01f;  // How quickly the tires move up and down with the terrain
     private Vector3[] tirePositions = new Vector3[4];  // The starting positions for each tire

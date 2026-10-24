@@ -7,10 +7,10 @@ public class KartWallInteractions : MonoBehaviour
 
     [Header("Wall Detection")]
     [SerializeField] private LayerMask wallDetectionLayer;  // The layers that count as walls
-    [SerializeField] private float wallDetectionDistance = 3;  // How far away the car will detect walls
-    [SerializeField] private float wallCollisionRedirectSpeed;  // How fast driving into a wall will turn you
+    [SerializeField] private float wallDetectionDistance = 1f;  // How far away the car will detect walls
+    [SerializeField] private float wallCollisionRedirectSpeed = 22f;  // How fast driving into a wall will turn you
     [SerializeField] private AnimationCurve wallBouncebackAngle;  // X-Angle you hit the wall (0-Paralell, 1-Head On), Y-Bounceback
-    [SerializeField] private float wallBouncebackPower;  // How much hitting the wall head on will bounce the player backwards
+    [SerializeField] private float wallBouncebackPower = 20000f;  // How much hitting the wall head on will bounce the player backwards
     private float wallAngle;  // The angle at which the car is facing a wall if there is one
 
 
