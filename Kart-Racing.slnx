@@ -3,8 +3,8 @@
   <Project Path="Fusion.Unity.csproj" />
   <Project Path="Cinemachine.Runtime.Tests.csproj" />
   <Project Path="Cinemachine.csproj" />
-  <Project Path="Photon.Realtime.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="Photon.Realtime.csproj" />
   <Project Path="com.unity.cinemachine.editor.csproj" />
   <Project Path="Assembly-CSharp-Editor-firstpass.csproj" />
   <Project Path="Assembly-CSharp-firstpass.csproj" />
