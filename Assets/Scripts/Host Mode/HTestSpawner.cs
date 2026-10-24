@@ -280,7 +280,7 @@ public class HTestSpawner : MonoBehaviour, INetworkRunnerCallbacks
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
+    public void OnUserSimulationMessage(NetworkRunner runner)
     {
         
     }

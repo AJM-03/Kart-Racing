@@ -13,7 +13,7 @@ public class KartController : MonoBehaviour
 
     [Header("References")]
     [HideInInspector] public Rigidbody rb;  // The kart's rigidBody component
-    [SerializeField] private CinemachineVirtualCamera virtualCamera;  // The main camera attached to the kart
+    private CinemachineVirtualCamera virtualCamera;  // The main camera attached to the kart
     [SerializeField] private KartWallInteractions wallInteractions;  // Detects and controls the kart's interactions with walls
     [SerializeField] private KartInput inputSource;  // The script that the input should be coming from
 
@@ -30,7 +30,6 @@ public class KartController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         virtualCamera = Camera.main.transform.parent.GetComponent<CinemachineVirtualCamera>();
         ChangeForm(KartEnums.KartForm.Car, true);
-        currentForm = KartEnums.KartForm.Car;
         canMove = true;
 
         SetCenterOfMass();
@@ -39,7 +38,7 @@ public class KartController : MonoBehaviour
 
     private void Start()
     {
-        if (playerNumber > 1) Destroy(virtualCamera.transform.GetChild(0).gameObject);
+        if (racerIndex > 1) Destroy(virtualCamera.transform.GetChild(0).gameObject);
     }
 
 
@@ -63,10 +62,10 @@ public class KartController : MonoBehaviour
 
     public void ChangeForm(KartEnums.KartForm targetForm, bool instant)  // Changes the current form of the kart
     {
-        if (targetForm == currentForm) return;
+        if (targetForm == currentForm && !instant) return;
         if (!canTransform) return;
 
-        currentFormScript.TransformOut(targetForm);
+        if (currentFormScript) currentFormScript.TransformOut(targetForm);
         KartEnums.KartForm oldForm = currentForm;
 
         currentForm = targetForm;

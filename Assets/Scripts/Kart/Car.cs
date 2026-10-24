@@ -213,11 +213,11 @@ public class Car : KartForm
 
     public override void TransformInto(KartEnums.KartForm fromForm)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public override void TransformOut(KartEnums.KartForm toForm)
     {
-        throw new System.NotImplementedException();
+
     }
 }

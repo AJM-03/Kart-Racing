@@ -107,8 +107,8 @@ public class ACarController : MonoBehaviour
     private Vector3[] tirePositions = new Vector3[4];  // The starting positions for each tire
     private Quaternion targetCarRotation;  // The rotation that the car wants to reach
 
-    [Header("Debug")]
-    [SerializeField] private bool wheelRays = true;
+    //[Header("Debug")]
+    //[SerializeField] private bool wheelRays = true;
 
     private void Start()
     {

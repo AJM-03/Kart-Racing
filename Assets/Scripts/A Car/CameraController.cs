@@ -4,7 +4,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [Header("References")]
-    public ACarController car;
+    private KartController kart;
     private Transform lookAt;
     private CinemachineVirtualCamera cam;
     private CinemachineTransposer transposer;
@@ -36,12 +36,15 @@ public class CameraController : MonoBehaviour
     [Header("Turning")]
     public Vector3 driftingOffsetChange;
     public Vector3 lookAtOffsetChange;
-    [SerializeField, Range(0f, 5f)] private float cameraHeadingChange = 0.75f;  // How far the camera will move left and right when steering
-    [SerializeField, Range(0f, 5f)] private float driftCameraHeadingChange = 0.75f;  // How far the camera will move left and right when drifting
+    //[SerializeField, Range(0f, 5f)] private float cameraHeadingChange = 0.75f;  // How far the camera will move left and right when steering
+    //[SerializeField, Range(0f, 5f)] private float driftCameraHeadingChange = 0.75f;  // How far the camera will move left and right when drifting
 
 
     void Start()
     {
+        kart = GetComponentInParent<KartController>();
+        if (kart == null) Debug.LogError("Kart Controller not found by " + this);
+
         cam = GetComponent<CinemachineVirtualCamera>();
         transposer = cam.GetCinemachineComponent<CinemachineTransposer>();
         orbitalTransposer = cam.GetCinemachineComponent<CinemachineOrbitalTransposer>();
@@ -58,21 +61,21 @@ public class CameraController : MonoBehaviour
         targetFOV = stationaryCamFOV;
         lookAtTargetPos = lookAtStartingPos;
 
-        if (car.IsBraking())  // If braking
+        if (kart.IsBraking())  // If braking
         {
-            targetOffset += (brakingOffsetChange * brakingOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
-            targetFOV += (brakingFOVChange * brakingOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
+            targetOffset += (brakingOffsetChange * brakingOffsetCurve.Evaluate(kart.GetVelocityRatio()));
+            targetFOV += (brakingFOVChange * brakingOffsetCurve.Evaluate(kart.GetVelocityRatio()));
         }
 
         else  // If driving
         {
-            targetOffset += (topSpeedOffsetChange * speedOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
-            targetFOV += (topSpeedFOVChange * speedOffsetCurve.Evaluate(car.GetCarVelocityRatio()));
+            targetOffset += (topSpeedOffsetChange * speedOffsetCurve.Evaluate(kart.GetVelocityRatio()));
+            targetFOV += (topSpeedFOVChange * speedOffsetCurve.Evaluate(kart.GetVelocityRatio()));
 
-            if (car.IsDrifting())  // If drifting
+            if (kart.IsDrifting())  // If drifting
             {
-                targetOffset += (driftingOffsetChange * speedOffsetCurve.Evaluate(car.GetCarVelocityRatio()) * car.GetDriftDirection());
-                lookAtTargetPos += (lookAtOffsetChange * speedOffsetCurve.Evaluate(car.GetCarVelocityRatio()) * car.GetDriftDirection());
+                targetOffset += (driftingOffsetChange * speedOffsetCurve.Evaluate(kart.GetVelocityRatio()) * kart.GetDriftDirection());
+                lookAtTargetPos += (lookAtOffsetChange * speedOffsetCurve.Evaluate(kart.GetVelocityRatio()) * kart.GetDriftDirection());
             }
         }
 

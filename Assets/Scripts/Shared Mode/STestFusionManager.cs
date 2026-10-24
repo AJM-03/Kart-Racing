@@ -233,7 +233,7 @@ public class STestFusionManager : MonoBehaviour, INetworkRunnerCallbacks
 
     }
 
-    public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
+    public void OnUserSimulationMessage(NetworkRunner runner)
     {
 
     }
