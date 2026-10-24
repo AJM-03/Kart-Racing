@@ -30,10 +30,7 @@ public abstract class KartInput : MonoBehaviour
 
     public virtual KartInputData GetInput()
     {
-        if (kart && kart.canMove == false)
-        {
-            data = new KartInputData();
-        }
+        if (!kart.canMove) data = new KartInputData();  // If the car should not be able to move, clear the input
 
         return data;
     }

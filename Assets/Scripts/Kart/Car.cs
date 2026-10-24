@@ -51,8 +51,7 @@ public class Car : KartForm
     private int driftDirection;  // Which way the car is drifting (-1 = Left, 1 = Right)
     private float driftControl;  // How tightly you are drifting
 
-    private Vector3 currentCarLocalVelocity = Vector3.zero;  // The current speed of the car
-    private float carVelocityRatio = 0;  // Current speed in comparison to top speed
+
 
     [Header("Wall Detection")]
     [SerializeField] private LayerMask wallDetectionLayer;  // The layers that count as walls
@@ -75,13 +74,14 @@ public class Car : KartForm
 
     public override void UpdateKart()
     {
-
+        DriftInput();
     }
 
 
     public override void FixedUpdateKart()
     {
-
+        wheels.Suspension();
+        GroundCheck();
     }
 
 
@@ -91,6 +91,44 @@ public class Car : KartForm
         bool grounded = wheels.GroundCheck();
         if (grounded) airTime = 0;
         else airTime += Time.deltaTime;
+    }
+
+    public override void CalculateKartVelocity()
+    {
+        kart.currentCarLocalVelocity = transform.InverseTransformDirection(kart.rb.linearVelocity).Round(2);
+
+        if (kart.currentCarLocalVelocity.z >= 0) kart.carVelocityRatio = kart.currentCarLocalVelocity.z / maxSpeed;
+        else kart.carVelocityRatio = kart.currentCarLocalVelocity.z / maxReverseSpeed;
+
+        kart.carVelocityRatio = kart.carVelocityRatio.Round(2);
+        if (kart.carVelocityRatio >= 0.975) kart.carVelocityRatio = 1;
+        if (kart.carVelocityRatio <= -0.975) kart.carVelocityRatio = -1;
+    }
+
+
+    private void DriftInput()
+    {
+        float steerInput = kart.currentInput.Steer;
+
+        if (Input.GetButtonDown("Jump") && !isDrifting && steerInput != 0 && kart.carVelocityRatio >= minVelocityRatioToDrift)  // Start Drifting
+        {
+            isDrifting = true;
+            driftDirection = steerInput > 0 ? 1 : -1;
+        }
+
+        if ((Input.GetButtonUp("Jump") || kart.carVelocityRatio < minVelocityRatioToDrift) && isDrifting)  // Stop Drifting
+        {
+            isDrifting = false;
+        }
+
+        if (isDrifting)
+        {
+            float driftControlInput = driftControlCurve.Evaluate(driftDirection == 1 ? steerInput : -steerInput);
+            if (IsBrakeDrifting()) // Brake Drifting
+                driftControl = ExtensionMethods.Remap(driftControlInput, -1, 1, brakeDriftWideTurn, brakeDriftSharpTurn);
+            else  // Standard Drifting
+                driftControl = ExtensionMethods.Remap(driftControlInput, -1, 1, driftWideTurn, driftSharpTurn);
+        }
     }
 
 
