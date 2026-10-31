@@ -17130,6 +17130,7 @@ MonoBehaviour:
   accelInput: 0
   brakeInput: 1
   steerInput: 0
+  driftInput: 0
 --- !u!114 &752321214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43686,6 +43687,7 @@ MonoBehaviour:
   accelInput: 1
   brakeInput: 0
   steerInput: 0
+  driftInput: 0
 --- !u!114 &1958488024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46013,8 +46015,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HoldInput
   accelInput: 1
-  brakeInput: 0
-  steerInput: -1
+  brakeInput: 1
+  steerInput: -0.95
+  driftInput: 1
 --- !u!114 &2125592416
 MonoBehaviour:
   m_ObjectHideFlags: 0

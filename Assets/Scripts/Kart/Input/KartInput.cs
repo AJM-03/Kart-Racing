@@ -9,12 +9,14 @@ public struct KartInputData
     public bool Accelerate;  // The player's current accel input 
     public bool Brake;  // The player's current brake input 
     public float Steer;  // The player's current steering input
+    public bool Drift;  // The player's current drift input 
 
-    public KartInputData(bool accelerate, bool brake, float steer = 0)
+    public KartInputData(bool accelerate, bool brake, float steer, bool drift)
     {
         Accelerate = accelerate;
         Brake = brake;
         Steer = steer;
+        Drift = drift;
     }
 }
 

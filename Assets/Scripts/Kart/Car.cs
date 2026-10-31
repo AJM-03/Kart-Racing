@@ -196,13 +196,13 @@ public class Car : KartForm
     {
         float steerInput = kart.currentInput.Steer;
 
-        if (Input.GetButtonDown("Jump") && !isDrifting && steerInput != 0 && carVelocityRatio >= minVelocityRatioToDrift)  // Start Drifting
+        if (!isDrifting && kart.currentInput.Drift && !isDrifting && steerInput != 0 && carVelocityRatio >= minVelocityRatioToDrift)  // Start Drifting
         {
             isDrifting = true;
             driftDirection = steerInput > 0 ? 1 : -1;
         }
 
-        if ((Input.GetButtonUp("Jump") || carVelocityRatio < minVelocityRatioToDrift) && isDrifting)  // Stop Drifting
+        if (((isDrifting && !kart.currentInput.Drift) || carVelocityRatio < minVelocityRatioToDrift) && isDrifting)  // Stop Drifting
         {
             isDrifting = false;
         }
