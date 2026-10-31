@@ -1091,7 +1091,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 870196843}
         m_TargetAssemblyTypeName: SessionJoin, Assembly-CSharp
         m_MethodName: JoinSession
         m_Mode: 1
@@ -4213,7 +4213,7 @@ GameObject:
   - component: {fileID: 1426944859}
   - component: {fileID: 1426944858}
   - component: {fileID: 1426944857}
-  - component: {fileID: 1426944856}
+  - component: {fileID: 1426944860}
   m_Layer: 5
   m_Name: Refresh
   m_TagString: Untagged
@@ -4241,18 +4241,6 @@ RectTransform:
   m_AnchoredPosition: {x: 695, y: -50}
   m_SizeDelta: {x: 250, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1426944856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1426944854}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8c2ae02fc5c5fb46907e584cd6b4f79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1426944857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4297,9 +4285,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1426944854}
         m_TargetAssemblyTypeName: FusionManager, Assembly-CSharp
-        m_MethodName: RefreshSessionListUI
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4347,6 +4335,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1426944854}
   m_CullTransparentMesh: 1
+--- !u!114 &1426944860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426944854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88c20e953cda3c64ea3a4a14541f204c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RefreshButton
 --- !u!1 &1484295268
 GameObject:
   m_ObjectHideFlags: 0
@@ -5929,7 +5929,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 870196843}
         m_TargetAssemblyTypeName: SessionJoin, Assembly-CSharp
         m_MethodName: Back
         m_Mode: 1
@@ -6803,7 +6803,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 870196843}
         m_TargetAssemblyTypeName: SessionJoin, Assembly-CSharp
         m_MethodName: ChangePassword
         m_Mode: 1

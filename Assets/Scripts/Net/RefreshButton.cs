@@ -11,6 +11,7 @@ public class RefreshButton : MonoBehaviour
     {
         refreshButton = GetComponent<Button>();
         refreshButton.onClick.AddListener(Refresh);
+        refreshButton.onClick.AddListener(FusionManager.Instance.RefreshSessionListUI);
         refreshButton.interactable = true;
     }
 
