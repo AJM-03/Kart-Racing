@@ -93,14 +93,14 @@ public class KartController : MonoBehaviour
 
 
     // Getters
-    public float GetVelocityRatio() { return currentFormScript.carVelocityRatio; }
-    public Vector3 GetVelocity() { return currentFormScript.currentCarLocalVelocity; }
-    public bool IsGrounded() { return currentTerrainState == KartEnums.CurrentTerrainState.Land; }
-    public bool IsInWater() { return currentTerrainState == KartEnums.CurrentTerrainState.Sea; }
+    public float GetVelocityRatio() { return currentFormScript.carVelocityRatio; }  // Returns a float between -1 and 1 showing how fast the kart is moving in relation to it's top speed
+    public Vector3 GetVelocity() { return currentFormScript.currentCarLocalVelocity; }  // Returns a vector showing the kart's current velocity
+    public bool IsGrounded() { return currentTerrainState == KartEnums.CurrentTerrainState.Land; }  // Returns true if the kart is currently grounded
+    public bool IsInWater() { return currentTerrainState == KartEnums.CurrentTerrainState.Sea; }  // Returns true if the kart is currently in water
     public float GetAccelDirection() { return currentInput.Accelerate ? 1 : (currentInput.Brake ? -1 : 0); }  // Returns a float that shows 1 for an accel input and -1 if braking instead
-    public bool IsBraking() { return GetAccelDirection() < 0 && GetVelocityRatio() > 0; }
-    public bool IsDrifting() { return currentFormScript.isDrifting; }
-    public bool IsBrakeDrifting() { return IsDrifting() && currentInput.Brake; }
-    public float GetDriftDirection() { return currentFormScript.driftDirection; }
-    public float GetDriftControl() { return currentFormScript.driftControl; }
+    public bool IsBraking() { return GetAccelDirection() < 0 && GetVelocityRatio() > 0; }  // Returns true if the kart is currently braking
+    public bool IsDrifting() { return currentFormScript.isDrifting; }  // Returns true if the kart is currently drifting
+    public bool IsBrakeDrifting() { return IsDrifting() && currentInput.Brake; }  // Returns true if the kart is currently brake drifting
+    public float GetDriftDirection() { return currentFormScript.driftDirection; }  // Returns the direction that the kart is drifting in, (-1 for left, 1 for right)
+    public float GetDriftControl() { return currentFormScript.driftControl; }  // Returns a float showing how tightly the kart is currently drifting
 }

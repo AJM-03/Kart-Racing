@@ -82,8 +82,16 @@ public class Car : KartForm
     void GroundCheck()
     {
         bool grounded = wheels.GroundCheck();
-        if (grounded) airTime = 0;
-        else airTime += Time.deltaTime;
+        if (grounded)
+        {
+            airTime = 0;
+            kart.currentTerrainState = KartEnums.CurrentTerrainState.Land;
+        }
+        else
+        {
+            airTime += Time.deltaTime;
+            kart.currentTerrainState = KartEnums.CurrentTerrainState.Sky;
+        }
     }
 
     public override void CalculateKartVelocity()
