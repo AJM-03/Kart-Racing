@@ -111,7 +111,7 @@ public class CarVisuals : MonoBehaviour
             }
             else  // Rear tires
             {
-                wheels.tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * ((kart.GetVelocityRatio() + kart.currentInput.Accelerate) / 2) * Time.deltaTime, Space.Self);  // Rear tires spin using velocity & acceleration
+                wheels.tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * ((kart.GetVelocityRatio() + kart.GetAccelDirection()) / 2) * Time.deltaTime, Space.Self);  // Rear tires spin using velocity & acceleration
                 //tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * carVelocityRatio * Time.deltaTime, Space.Self);  // Rear tires spin using velocity
                 //tires[i].transform.Rotate(-Vector3.up, tireRotSpeed * moveInput * Time.deltaTime, Space.Self);  // Rear tires spin using acceleration
             }

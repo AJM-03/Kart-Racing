@@ -6,12 +6,14 @@ using UnityEngine;
 
 public struct KartInputData
 {
-    public float Accelerate;  // The player's current accel & decel input 
+    public bool Accelerate;  // The player's current accel input 
+    public bool Brake;  // The player's current brake input 
     public float Steer;  // The player's current steering input
 
-    public KartInputData(float accelerate = 0, float steer = 0)
+    public KartInputData(bool accelerate, bool brake, float steer = 0)
     {
         Accelerate = accelerate;
+        Brake = brake;
         Steer = steer;
     }
 }

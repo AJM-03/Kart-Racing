@@ -25,8 +25,7 @@ public class KartDebugger : MonoBehaviour
             DebugStats.carStats[kart.racerIndex - 1].playerNumber = kart.playerNumber;
         }
 
-        DebugStats.carStats[kart.racerIndex - 1].moveInput = kart.currentInput.Accelerate;
-        DebugStats.carStats[kart.racerIndex - 1].moveInput = kart.currentInput.Accelerate;
+        DebugStats.carStats[kart.racerIndex - 1].moveInput = kart.GetAccelDirection();
         if (kart.IsDrifting()) DebugStats.carStats[kart.racerIndex - 1].steerInput = kart.GetDriftControl() * kart.GetDriftDirection();
         else DebugStats.carStats[kart.racerIndex - 1].steerInput = kart.currentInput.Steer;
         DebugStats.carStats[kart.racerIndex - 1].braking = kart.IsBraking();

@@ -113,7 +113,7 @@ public class Car : KartForm
 
     private void Acceleration()
     {
-        isReversing = (kart.currentInput.Accelerate < 0 && carVelocityRatio < 0);
+        isReversing = (kart.GetAccelDirection() < 0 && carVelocityRatio < 0);
         if (Mathf.Abs(currentCarLocalVelocity.z) >= (!isReversing ? maxSpeed : maxReverseSpeed)) return;  // If we are already at our max speed then stop
 
 
@@ -122,7 +122,7 @@ public class Car : KartForm
 
         float accel = acceleration * accelerationCurve.Evaluate(carVelocityRatio);
         if (isReversing) accel = reverseAcceleration * reverseAccelerationCurve.Evaluate(carVelocityRatio);  // Reverse acceleration
-        accel *= kart.currentInput.Accelerate;  // Multiply by the player's input (1 fowards, -1 reverse)
+        accel *= kart.GetAccelDirection();  // Multiply by the player's input (1 fowards, -1 reverse)
 
         kart.rb.AddForceAtPosition(accel * accelDirection, accelerationPoint.position, ForceMode.Acceleration);
     }

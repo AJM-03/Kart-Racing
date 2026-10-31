@@ -6,12 +6,14 @@ using UnityEngine;
 
 public class HoldInput : KartInput
 {
-    [SerializeField, Range(-1f, 1f)] private float accelInput = 1f;
+    [SerializeField] private bool accelInput = true;
+    [SerializeField] private bool brakeInput = false;
     [SerializeField, Range(-1f, 1f)] private float steerInput;
 
     public override KartInputData GetInput()
     {
         data.Accelerate = accelInput;
+        data.Brake = brakeInput;
         data.Steer = steerInput;
 
         base.GetInput();

@@ -97,9 +97,10 @@ public class KartController : MonoBehaviour
     public Vector3 GetVelocity() { return currentFormScript.currentCarLocalVelocity; }
     public bool IsGrounded() { return currentTerrainState == KartEnums.CurrentTerrainState.Land; }
     public bool IsInWater() { return currentTerrainState == KartEnums.CurrentTerrainState.Sea; }
-    public bool IsBraking() { return currentInput.Accelerate < 0 && GetVelocityRatio() > 0; }
+    public float GetAccelDirection() { return currentInput.Accelerate ? 1 : (currentInput.Brake ? -1 : 0); }  // Returns a float that shows 1 for an accel input and -1 if braking instead
+    public bool IsBraking() { return GetAccelDirection() < 0 && GetVelocityRatio() > 0; }
     public bool IsDrifting() { return currentFormScript.isDrifting; }
-    public bool IsBrakeDrifting() { return currentFormScript.isDrifting && IsBraking(); }
+    public bool IsBrakeDrifting() { return IsDrifting() && currentInput.Brake; }
     public float GetDriftDirection() { return currentFormScript.driftDirection; }
     public float GetDriftControl() { return currentFormScript.driftControl; }
 }
