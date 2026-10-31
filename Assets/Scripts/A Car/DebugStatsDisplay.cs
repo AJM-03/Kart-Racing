@@ -16,12 +16,12 @@ public class DebugStatsDisplay : MonoBehaviour
             if (text.Count > i)
             {
                 text[i].text = @$"
-Player: {i + 1}           
+Player: {i + 1} ~ {DebugStats.carStats[i].playerNumber}          
 MoveInput: {DebugStats.carStats[i].moveInput}
 SteerInput: {DebugStats.carStats[i].steerInput}
 Braking: {DebugStats.carStats[i].braking}
-CurrentCarVelocity: {DebugStats.carStats[i].currentCarLocalVelocity} ~ {DebugStats.carStats[i].currentCarLocalVelocity.magnitude.Round(2)}
-CarVelocityRatio: {DebugStats.carStats[i].carVelocityRatio:F2}
+Velocity: {DebugStats.carStats[i].currentCarLocalVelocity} ~ {DebugStats.carStats[i].currentCarLocalVelocity.magnitude.Round(2)}
+VelocityRatio: {DebugStats.carStats[i].carVelocityRatio:F2}
 GroundedWheels: {DebugStats.carStats[i].groundedWheels}
                 ";
             }

@@ -4,7 +4,7 @@ public class KartDebugger : MonoBehaviour
 {
     private KartController kart;
 
-    void Awake()
+    void Start()
     {
         kart = GetComponentInParent<KartController>();
         if (kart == null) Debug.LogError("Kart Controller not found by " + this);
@@ -22,8 +22,10 @@ public class KartDebugger : MonoBehaviour
         {
             DebugStats.carStats.Add(new CarDebugStats());
             kart.racerIndex = DebugStats.carStats.Count;
+            DebugStats.carStats[kart.racerIndex - 1].playerNumber = kart.playerNumber;
         }
 
+        DebugStats.carStats[kart.racerIndex - 1].moveInput = kart.currentInput.Accelerate;
         DebugStats.carStats[kart.racerIndex - 1].moveInput = kart.currentInput.Accelerate;
         if (kart.IsDrifting()) DebugStats.carStats[kart.racerIndex - 1].steerInput = kart.GetDriftControl() * kart.GetDriftDirection();
         else DebugStats.carStats[kart.racerIndex - 1].steerInput = kart.currentInput.Steer;

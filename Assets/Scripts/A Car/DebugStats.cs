@@ -11,6 +11,7 @@ public static class DebugStats
 
 public class CarDebugStats
 {
+    public int playerNumber;
     public float moveInput;
     public float steerInput;
     public bool braking;
