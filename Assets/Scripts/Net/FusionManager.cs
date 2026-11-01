@@ -7,6 +7,7 @@ using System;
 using UnityEngine.UI;
 using JetBrains.Annotations;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -20,11 +21,12 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
 
     [Header("Session List")]
     private List<SessionInfo> sessions = new List<SessionInfo>();
-    public GameObject sessionListCanvas;
+    public GameObject nameEntryCanvas, sessionListCanvas;
     public Button refreshButton;
     public Transform sessionListContent;
     public GameObject sessionEntryPrefab;
     private bool firstLobby = false;
+    private bool quickStart = false;
 
     [Header("Session Creation")]
     public TMP_InputField sessionNameInput;
@@ -34,8 +36,13 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
 
     private void Awake()
     {
-        if (Instance == null) { Instance = this; }
-        else { Destroy(gameObject); }
+        if (Instance != null)
+        {
+            Debug.Log("Replacing Fusion Manager & Runner");
+            Destroy(Instance.gameObject);
+        }
+
+        Instance = this;
     }
 
 
@@ -44,6 +51,7 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         playerName = _playerName;
         RefreshSessionListUI();  // Load and display the list of existing sessions
+        nameEntryCanvas.SetActive(false);
         sessionListCanvas.SetActive(true);
 
         networkRunner ??= gameObject.AddComponent<NetworkRunner>();  // Create a network runner if there wasn't one
@@ -101,6 +109,8 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
             RefreshSessionListUI();
             firstLobby = true;
         }
+
+        if (quickStart) QuickStartConnect();
     }
 
 
@@ -133,6 +143,71 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
                 }
             }
         }
+    }
+
+    public void QuickStart()
+    {
+        nameEntryCanvas.SetActive(false);
+        int randomNum = UnityEngine.Random.Range(1000, 9999);
+        //string randomSessionName = "Room-" + randomInt.ToString();
+        playerName = "Player-" + randomNum.ToString();
+
+        networkRunner ??= gameObject.AddComponent<NetworkRunner>();  // Create a network runner if there wasn't one
+        networkRunner.JoinSessionLobby(SessionLobby.Shared);
+        quickStart = true;
+    }
+
+    private async void QuickStartConnect()
+    {
+        quickStart = false;
+
+        // Search for an existing open session
+        foreach (SessionInfo session in sessions)
+        {
+            if (session.IsVisible && // If visible session
+                session.Properties.GetValueOrDefault("sessionKey").PropertyValue as string == "" &&  // If public
+                session.PlayerCount < session.MaxPlayers && // If it is not full
+                session.IsOpen)  // If it is not open
+            {
+                Debug.Log("Quick Joining Lobby " + session.Name);
+                await networkRunner.StartGame(new StartGameArgs()
+                {
+                    GameMode = GameMode.Shared,
+                    SessionName = session.Name,
+                    Scene = SceneRef.FromIndex(1),
+                });
+                return;
+            }
+        }
+
+        // Else create a new one
+        SessionProperty key = "";
+        Dictionary<string, SessionProperty> sessionProperties = new Dictionary<string, SessionProperty>();
+        sessionProperties.Add("sessionKey", key);
+
+        int randomNum = UnityEngine.Random.Range(1000, 9999);
+        string randomSessionName = "Lobby-" + randomNum.ToString();
+        Debug.Log("Quick Creating Lobby " + randomSessionName);
+
+        await networkRunner.StartGame(new StartGameArgs()
+        {
+            GameMode = GameMode.Shared,
+            SessionName = randomSessionName,
+            SessionProperties = sessionProperties,
+            PlayerCount = 8,
+            Scene = SceneRef.FromIndex(1),
+        });
+    }
+
+    public async void Singleplayer()
+    {
+        networkRunner ??= gameObject.AddComponent<NetworkRunner>();  // Create a network runner if there wasn't one
+        await networkRunner.StartGame(new StartGameArgs()
+        {
+            GameMode = GameMode.Single,
+            PlayerCount = 1,
+            Scene = SceneRef.FromIndex(1),
+        });
     }
 
     public void OnConnectedToServer(NetworkRunner runner)
