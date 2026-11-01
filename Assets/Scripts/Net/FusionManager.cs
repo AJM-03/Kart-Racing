@@ -35,41 +35,40 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
     private void Awake()
     {
         if (Instance == null) { Instance = this; }
+        else { Destroy(gameObject); }
     }
 
 
+    // Called after name input happens, creates network runner and connects to the network lobby
     public void ConnectToLobby(string _playerName)
     {
         playerName = _playerName;
-        RefreshSessionListUI();
+        RefreshSessionListUI();  // Load and display the list of existing sessions
         sessionListCanvas.SetActive(true);
 
-        if (networkRunner == null)
-        {
-            networkRunner = gameObject.AddComponent<NetworkRunner>(); 
-        }
+        networkRunner ??= gameObject.AddComponent<NetworkRunner>();  // Create a network runner if there wasn't one
 
         networkRunner.JoinSessionLobby(SessionLobby.Shared);
     }
 
 
+    // Called when the player attempts to join an existing session
     public async void ConnectToSession(string sessionName)
     {
         sessionListCanvas.SetActive(false);
 
-        if (networkRunner == null)
-        {
-            networkRunner = gameObject.AddComponent<NetworkRunner>();
-        }
+        networkRunner ??= gameObject.AddComponent<NetworkRunner>();  // Create a network runner if there wasn't one
 
         await networkRunner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Shared,
             SessionName = sessionName,
+            Scene = SceneRef.FromIndex(1),
         });
     }
 
 
+    // Called when the player attempts to create a new session
     public async void CreateSession(string sessionName, string sessionPassword, int sessionPlayerCount)
     {
         //int randomInt = UnityEngine.Random.Range(1000, 9999);
@@ -79,10 +78,7 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
         Dictionary<string, SessionProperty> sessionProperties = new Dictionary<string, SessionProperty>();
         sessionProperties.Add("sessionKey", key);
 
-        if (networkRunner == null)
-        {
-            networkRunner = gameObject.AddComponent<NetworkRunner>();
-        }
+        networkRunner ??= gameObject.AddComponent<NetworkRunner>();  // Create a network runner if there wasn't one
 
         await networkRunner.StartGame(new StartGameArgs()
         {
@@ -90,6 +86,7 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
             SessionName = sessionName,
             SessionProperties = sessionProperties, 
             PlayerCount = sessionPlayerCount,
+            Scene = SceneRef.FromIndex(1),
         });
     }
 
@@ -120,7 +117,7 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
             {
                 GameObject entry = GameObject.Instantiate(sessionEntryPrefab, sessionListContent);
                 entry.transform.parent = sessionListContent;
-                STestSessionEntry script = entry.GetComponent<STestSessionEntry>();
+                SessionEntry script = entry.GetComponent<SessionEntry>();
                 script.sessionName.text = session.Name;
                 script.playerCount.text = session.PlayerCount + "/" + session.MaxPlayers;
                 script.sessionPassword = session.Properties.GetValueOrDefault("sessionKey").PropertyValue as string;
@@ -197,14 +194,17 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log("Player joined");
+        Debug.Log("Player joined - " + player.PlayerId);
 
+        //if (runner.IsSceneAuthority)
+        //{
+        //    runner.LoadScene(SceneRef.FromIndex(1), UnityEngine.SceneManagement.LoadSceneMode.Single);
+        //}
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log("Player left");
-
+        Debug.Log("Player left - " + player.PlayerId);
     }
 
     public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
