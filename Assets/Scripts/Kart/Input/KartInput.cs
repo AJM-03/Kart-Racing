@@ -26,7 +26,7 @@ public abstract class KartInput : MonoBehaviour
     private KartController kart;
 
 
-    private void Start()
+    private void Awake()
     {
         kart = GetComponentInParent<KartController>();
         if (kart == null) Debug.LogError("Kart Controller not found by " + this);

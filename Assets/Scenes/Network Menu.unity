@@ -2223,7 +2223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FusionManager
   networkRunner: {fileID: 0}
-  playerPrefab: {fileID: 0}
+  playerPrefab: {fileID: 4460852341322733916, guid: eca75277420b5774389d912779969b9f, type: 3}
   playerName: 
   sessionListCanvas: {fileID: 872078033}
   refreshButton: {fileID: 1426944857}

@@ -28,7 +28,7 @@ public class KartController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        virtualCamera = Camera.main.transform.parent.GetComponent<CinemachineVirtualCamera>();
+        if (Camera.main) virtualCamera = Camera.main.transform.parent.GetComponent<CinemachineVirtualCamera>();
         ChangeForm(KartEnums.KartForm.Car, true);
         canMove = true;
 

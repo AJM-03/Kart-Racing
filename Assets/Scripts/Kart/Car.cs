@@ -55,7 +55,7 @@ public class Car : KartForm
     [HideInInspector] public float airTime;  // How long the car has been in the air
 
 
-    void Start()
+    void Awake()
     {
         kart = GetComponentInParent<KartController>();
         if (kart == null) Debug.LogError("Kart Controller not found by " + this);
