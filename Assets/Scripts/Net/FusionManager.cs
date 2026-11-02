@@ -5,7 +5,6 @@ using Fusion;
 using Fusion.Sockets;
 using System;
 using UnityEngine.UI;
-using JetBrains.Annotations;
 using TMPro;
 using UnityEngine.SceneManagement;
 
@@ -237,8 +236,7 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
     {
-        Debug.Log("Disconnected to server");
-
+        Debug.Log("Disconnected from server, reason " + reason.ToString());
     }
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
@@ -270,11 +268,6 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         Debug.Log("Player joined - " + player.PlayerId);
-
-        //if (runner.IsSceneAuthority)
-        //{
-        //    runner.LoadScene(SceneRef.FromIndex(1), UnityEngine.SceneManagement.LoadSceneMode.Single);
-        //}
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
@@ -305,7 +298,7 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
         Debug.Log("Server shutdown " + shutdownReason.ToString());
-
+        SceneManager.LoadScene("Network Menu");
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner)

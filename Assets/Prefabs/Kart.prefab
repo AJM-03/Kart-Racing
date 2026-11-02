@@ -3347,6 +3347,8 @@ GameObject:
   - component: {fileID: 8734821734494206883}
   - component: {fileID: -4125663951021320605}
   - component: {fileID: 7838443775901878625}
+  - component: {fileID: 6329292934268095528}
+  - component: {fileID: 6484808251844424779}
   m_Layer: 7
   m_Name: Kart
   m_TagString: Player
@@ -3528,6 +3530,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 7838443775901878625}
+  - {fileID: 6329292934268095528}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &7838443775901878625
 MonoBehaviour:
@@ -3570,6 +3573,30 @@ MonoBehaviour:
     MinImpactfulCollisionAlignment: 0.3
     ImpactStartCorrectionTime: 0.1
     ImpactCorrectionTimeComplete: 0.3
+--- !u!114 &6329292934268095528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7611615458947483580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1007018ef10f8c46a5e987f258c2f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KartNetworkController
+--- !u!114 &6484808251844424779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7611615458947483580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7282b830e32394b439b267f30a02c038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KartInitializer
 --- !u!1 &7768789756224107444
 GameObject:
   m_ObjectHideFlags: 0

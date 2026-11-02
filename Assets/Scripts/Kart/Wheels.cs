@@ -53,7 +53,7 @@ public class Wheels : MonoBehaviour
             Vector3 surfaceNormal = hit.normal;  // Get the surface normal
             float slopeAngle = Vector3.Angle(surfaceNormal, Vector3.up);  // Calculate slope angle relative to world up
             Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, surfaceNormal), surfaceNormal).normalized; // Get slope direction(downhill vector)
-            if (slopeAngle != 0) Debug.Log($"Slope Angle: {slopeAngle:F2}� | Slope Direction: {slopeDirection}");
+            //if (slopeAngle != 0) Debug.Log($"Slope Angle: {slopeAngle:F2}� | Slope Direction: {slopeDirection}");
 
 
             if (didHit && slopeAngle <= driveableSlopeLimt)  // If the wheel is on something it can drive on

@@ -4,11 +4,10 @@ public class KartDebugger : MonoBehaviour
 {
     private KartController kart;
 
-    void Start()
+    private void Awake()
     {
         kart = GetComponentInParent<KartController>();
         if (kart == null) Debug.LogError("Kart Controller not found by " + this);
-        UpdateDebugStats();
     }
 
     void Update()

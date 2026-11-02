@@ -28,17 +28,7 @@ public class KartController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        if (Camera.main) virtualCamera = Camera.main.transform.parent.GetComponent<CinemachineVirtualCamera>();
-        ChangeForm(KartEnums.KartForm.Car, true);
         canMove = true;
-
-        SetCenterOfMass();
-    }
-
-
-    private void Start()
-    {
-        if (racerIndex > 1) Destroy(virtualCamera.transform.GetChild(0).gameObject);
     }
 
 
@@ -77,18 +67,6 @@ public class KartController : MonoBehaviour
     }
 
 
-
-    private void SetCenterOfMass()  // Initializes the kart's rigidbody by setting the centre of mass
-    {
-        float x = 0;
-        float z = 0;
-        foreach (Transform point in car.wheels.rayPoints)
-        {
-            x += point.localPosition.x;
-            z += point.localPosition.z;
-        }
-        rb.centerOfMass = new Vector3(x, -0.25f, z); // Lower the center of mass.
-    }
 
 
 

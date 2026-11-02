@@ -11,7 +11,7 @@ public class PlayerInput : KartInput
         data.Brake = Input.GetButton("Fire1");
         data.Steer = Input.GetAxis("Horizontal");
         data.Drift = Input.GetButton("Jump");
-
+        data.Disconnect = Input.GetButton("Cancel");
 
         base.GetInput();
         return data;
