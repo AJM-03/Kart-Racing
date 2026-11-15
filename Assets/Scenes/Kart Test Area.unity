@@ -8655,6 +8655,7 @@ GameObject:
   - component: {fileID: 436038698}
   - component: {fileID: 436038697}
   - component: {fileID: 436038696}
+  - component: {fileID: 436038699}
   m_Layer: 7
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -8771,6 +8772,22 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &436038699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 436038694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Unity::Fusion.EnableOnSingleRunner
+  PreferredRunner: 0
+  Components:
+  - {fileID: 436038697}
+  _guid: 471e6f67-322d-4ce6-
 --- !u!1 &436452530
 GameObject:
   m_ObjectHideFlags: 0
@@ -12684,6 +12701,50 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 6651089971619896731, guid: 4ecd987bb13c1ab4daf2d5a9805ff305, type: 3}
+--- !u!1 &571778737
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 571778739}
+  - component: {fileID: 571778741}
+  m_Layer: 0
+  m_Name: Scene Initialiser
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &571778739
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571778737}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &571778741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571778737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4034e5fb709084a41a47fd718aaeaf63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestRunner
 --- !u!1 &577129872
 GameObject:
   m_ObjectHideFlags: 0
@@ -17028,6 +17089,7 @@ GameObject:
   - component: {fileID: 800331514}
   - component: {fileID: 800331513}
   - component: {fileID: 800331512}
+  - component: {fileID: 800331515}
   m_Layer: 7
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -17144,6 +17206,22 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &800331515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800331510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Unity::Fusion.EnableOnSingleRunner
+  PreferredRunner: 0
+  Components:
+  - {fileID: 800331513}
+  _guid: 0b9b85e9-d8f4-4dbe-
 --- !u!1 &828383126 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7920883768183543538, guid: c50ebca24a3f750458029ab36e77b862, type: 3}
@@ -42222,6 +42300,7 @@ GameObject:
   - component: {fileID: 2126725820}
   - component: {fileID: 2126725819}
   - component: {fileID: 2126725818}
+  - component: {fileID: 2126725821}
   m_Layer: 7
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -42338,6 +42417,22 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &2126725821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2126725816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Unity::Fusion.EnableOnSingleRunner
+  PreferredRunner: 0
+  Components:
+  - {fileID: 2126725819}
+  _guid: 9a267bb9-31e7-4cd3-
 --- !u!64 &2131024292
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -42912,6 +43007,7 @@ MeshFilter:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 571778739}
   - {fileID: 1901848274}
   - {fileID: 1594686813}
   - {fileID: 685258678359765887}

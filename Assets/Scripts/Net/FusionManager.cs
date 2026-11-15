@@ -42,6 +42,9 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
         }
 
         Instance = this;
+
+        // If we are trying to test a specific scene, jump straight into that one in singleplayer mode
+        if (TestSceneLoader.HasScene()) Singleplayer(TestSceneLoader.GetScene());
     }
 
 
@@ -198,14 +201,18 @@ public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
         });
     }
 
-    public async void Singleplayer()
+    public async void Singleplayer(int sceneIndex = 1)
     {
         networkRunner ??= gameObject.AddComponent<NetworkRunner>();  // Create a network runner if there wasn't one
+
+        Debug.Log("Starting game in singleplayer");
+
         await networkRunner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Single,
+            SessionName = "Singleplayer Room",
             PlayerCount = 1,
-            Scene = SceneRef.FromIndex(1),
+            Scene = SceneRef.FromIndex(sceneIndex),
         });
     }
 

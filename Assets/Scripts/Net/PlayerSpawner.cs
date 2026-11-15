@@ -10,7 +10,7 @@ public class PlayerSpawner : SimulationBehaviour
     {
         var runner = NetworkRunner.GetRunnerForGameObject(gameObject);
 
-        if (!runner.IsRunning) return;
+        if (FusionManager.Instance == null || !runner.IsRunning) return;
             
         runner.AddGlobal(this);
 
