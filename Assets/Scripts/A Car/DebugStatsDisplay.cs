@@ -23,6 +23,7 @@ Braking: {DebugStats.carStats[i].braking}
 Velocity: {DebugStats.carStats[i].currentCarLocalVelocity} ~ {DebugStats.carStats[i].currentCarLocalVelocity.magnitude.Round(2)}
 VelocityRatio: {DebugStats.carStats[i].carVelocityRatio:F2}
 GroundedWheels: {DebugStats.carStats[i].groundedWheels}
+Ping: {DebugStats.carStats[i].targetKart.GetComponentInChildren<KartNetworkController>().GetPing():F2} ms
                 ";
             }
         }

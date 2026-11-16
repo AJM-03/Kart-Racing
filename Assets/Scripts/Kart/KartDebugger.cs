@@ -21,6 +21,7 @@ public class KartDebugger : MonoBehaviour
         {
             DebugStats.carStats.Add(new CarDebugStats());
             kart.racerIndex = DebugStats.carStats.Count;
+            DebugStats.carStats[kart.racerIndex - 1].targetKart = kart.gameObject;
             DebugStats.carStats[kart.racerIndex - 1].playerNumber = kart.playerNumber;
         }
 
