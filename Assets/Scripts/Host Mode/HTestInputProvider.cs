@@ -11,7 +11,7 @@ using static UnityEngine.InputSystem.DefaultInputActions;
 public class HTestInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 {
     // creating a instance of the Input Action created
-    private TestControls _playerActionMap;
+    private PlayerControls _playerActionMap;
     HTestNetworkInputData inputData = new HTestNetworkInputData();
 
 
@@ -31,7 +31,7 @@ public class HTestInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
     private void EnableActionMap()
     {
-        if (_playerActionMap == null) _playerActionMap = new TestControls();
+        if (_playerActionMap == null) _playerActionMap = new PlayerControls();
         _playerActionMap.Movement.Enable();
     }
 

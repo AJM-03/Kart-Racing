@@ -4,6 +4,7 @@ using Fusion;
 public class KartNetworkController : NetworkBehaviour, ISpawned
 {
     private KartController kart;
+    [HideInInspector] public bool spawned;
     [Networked] private double ping { get; set; }
 
     void Awake()
@@ -16,7 +17,7 @@ public class KartNetworkController : NetworkBehaviour, ISpawned
     {
         if (kart.playerNumber == 5) return;
 
-        if (kart.currentInput.Disconnect)
+        if (kart.currentInput.Pause)
         {
             Debug.Log("Disconnect request recieved");
             Runner.Shutdown();

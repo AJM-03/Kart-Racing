@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.InputSystem.DefaultInputActions;
 
 /* Will hold an input such as constantly accelerating or driving in circles, 
  * mostly just for testing purposes
@@ -14,10 +15,15 @@ public class HoldInput : KartInput
 
     public override KartInputData GetInput()
     {
-        data.Accelerate = accelInput;
-        data.Brake = brakeInput;
-        data.Steer = steerInput;
-        data.Drift = driftInput;
+        data = new KartInputData(
+            accelInput,
+            brakeInput,
+            steerInput,
+            driftInput,
+            false,  // Item
+            false,  // Transform
+            false   // Pause
+        );
 
         base.GetInput();
         return data;
