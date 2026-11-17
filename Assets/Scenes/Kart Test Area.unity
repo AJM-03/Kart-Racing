@@ -8672,7 +8672,7 @@ Transform:
   m_GameObject: {fileID: 436038694}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0000000037242216, y: -8.1242074e-20, z: 4.0246735e-21, w: 1}
-  m_LocalPosition: {x: -3.28, y: 0.0000000044697246, z: 0.00000009323846}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15682,6 +15682,7 @@ GameObject:
   - component: {fileID: 752321212}
   - component: {fileID: 752321218}
   - component: {fileID: 752321219}
+  - component: {fileID: 752321220}
   m_Layer: 7
   m_Name: Kart (3)
   m_TagString: Player
@@ -15872,7 +15873,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1007018ef10f8c46a5e987f258c2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartNetworkController
-  _ping: 0
+  spawned: 0
+--- !u!114 &752321220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 752321211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
+  SortKey: 3863415390
+  SendPriority: 1
+  EnableInterpolation: 1
+  Flags: 2
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 752321213}
+  - {fileID: 752321219}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &753790717 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3010816782383488654, guid: 0cf8b466e96c8ae40a3ed7dbd14ffa26, type: 3}
@@ -17120,7 +17142,7 @@ Transform:
   m_GameObject: {fileID: 800331510}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0000000037242216, y: -8.1242074e-20, z: 4.0246735e-21, w: 1}
-  m_LocalPosition: {x: 6.72, y: -0.0000000091574845, z: -0.00000019102515}
+  m_LocalPosition: {x: 10, y: -0.00000001362721, z: -0.00000028426362}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -40001,6 +40023,7 @@ GameObject:
   - component: {fileID: 1958488028}
   - component: {fileID: 1958488029}
   - component: {fileID: 1958488030}
+  - component: {fileID: 1958488031}
   m_Layer: 7
   m_Name: Kart (2)
   m_TagString: Player
@@ -40191,7 +40214,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1007018ef10f8c46a5e987f258c2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartNetworkController
-  _ping: 0
+  spawned: 0
+--- !u!114 &1958488031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958488022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
+  SortKey: 35667019
+  SendPriority: 1
+  EnableInterpolation: 1
+  Flags: 262146
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 1958488023}
+  - {fileID: 1958488030}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &1961722911 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2312bd93d2bda4246b1b9ca2530ced07, type: 3}
@@ -42139,6 +42183,7 @@ GameObject:
   - component: {fileID: 2125592420}
   - component: {fileID: 2125592421}
   - component: {fileID: 2125592422}
+  - component: {fileID: 2125592423}
   m_Layer: 7
   m_Name: Kart (1)
   m_TagString: Player
@@ -42329,7 +42374,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1007018ef10f8c46a5e987f258c2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartNetworkController
-  _ping: 0
+  spawned: 0
+--- !u!114 &2125592423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125592414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
+  SortKey: 3835504584
+  SendPriority: 1
+  EnableInterpolation: 1
+  Flags: 262146
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 2125592415}
+  - {fileID: 2125592422}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &2126725816
 GameObject:
   m_ObjectHideFlags: 0
@@ -42359,7 +42425,7 @@ Transform:
   m_GameObject: {fileID: 2126725816}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0000000037242216, y: -8.1242074e-20, z: 4.0246735e-21, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 3.28, y: -0.0000000044697246, z: -0.00000009323846}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

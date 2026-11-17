@@ -35,6 +35,7 @@ public class KartController : MonoBehaviour
 
     private void Update()
     {
+        if (!GetComponent<KartNetworkController>().spawned) return;
         currentInput = inputSource.GetInput();
         currentFormScript.UpdateKart();
     }
@@ -43,6 +44,7 @@ public class KartController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!GetComponent<KartNetworkController>().spawned) return;
         currentFormScript.CalculateKartVelocity();
         wallInteractions.WallDetection();
         currentFormScript.FixedUpdateKart();

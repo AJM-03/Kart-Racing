@@ -3586,6 +3586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1007018ef10f8c46a5e987f258c2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartNetworkController
+  spawned: 0
 --- !u!114 &6484808251844424779
 MonoBehaviour:
   m_ObjectHideFlags: 0

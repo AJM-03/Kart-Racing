@@ -36,12 +36,18 @@ public abstract class KartInput : NetworkBehaviour
 
     private void Awake()
     {
+        Init();
+    }
+
+    protected void Init()
+    {
         kart = GetComponentInParent<KartController>();
         if (kart == null) Debug.LogError("Kart Controller not found by " + this);
     }
 
     public virtual KartInputData GetInput()
     {
+        if (!HasStateAuthority) ClearInput(false);  // If the client does not have authority, clear the input
         if (!kart.canMove) ClearInput(true);  // If the car should not be able to move, clear the input
 
         return data;

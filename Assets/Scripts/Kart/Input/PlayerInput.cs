@@ -9,20 +9,28 @@ public class PlayerInput : KartInput
 
     public void Awake()
     {
+        Init();
         EnableActionMap();
     }
+
+    public void OnEnable() { EnableActionMap(); }
+
+    public void OnDisable() { DisableActionMap(); }
 
     private void EnableActionMap()
     {
         if (_playerActionMap == null) _playerActionMap = new PlayerControls();
-        _playerActionMap.Movement.Enable();
+        _playerActionMap.Driving.Enable();
+    }
+
+    private void DisableActionMap()
+    {
+        if (_playerActionMap != null) _playerActionMap.Driving.Disable();
     }
 
 
     public override KartInputData GetInput()
     {
-        if (!HasInputAuthority) base.GetInput();
-
         var playerActions = _playerActionMap.Driving;
 
 
@@ -35,8 +43,11 @@ public class PlayerInput : KartInput
             playerActions.Transform.IsPressed(),
             playerActions.Pause.IsPressed()
             );
+        Debug.Log("1 - " + data.Accelerate);
 
         base.GetInput();
+
+        Debug.Log("2 - " + data.Accelerate);
         return data;
     }
 }

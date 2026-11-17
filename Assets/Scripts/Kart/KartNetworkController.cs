@@ -13,6 +13,12 @@ public class KartNetworkController : NetworkBehaviour, ISpawned
         if (kart == null) Debug.LogError("Kart Controller not found by " + this);
     }
 
+    public override void Spawned()
+    {
+        Debug.Log("Kart Spawned");
+        spawned = true;
+    }
+
     public override void FixedUpdateNetwork()
     {
         if (kart.playerNumber == 5) return;
