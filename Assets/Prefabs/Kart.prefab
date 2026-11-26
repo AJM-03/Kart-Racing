@@ -3499,6 +3499,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a37afbbde56f69542a875323598a4be0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
+  accelerateInput: 0
+  brakeInput: 0
+  steerInput: 0
+  driftInput: 0
+  itemInput: 0
+  transformInput: 0
+  pauseInput: 0
 --- !u!114 &8734821734494206883
 MonoBehaviour:
   m_ObjectHideFlags: 0
