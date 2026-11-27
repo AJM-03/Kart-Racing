@@ -20,6 +20,7 @@ public class LocalPlayerConfigurationManager : MonoBehaviour
     {
         if (Instance != null)
         {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
             Destroy(this);
         }
         else
@@ -27,8 +28,21 @@ public class LocalPlayerConfigurationManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(Instance);
             playerConfigs = new List<PlayerConfiguration>();
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
+    }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Network Menu")
+        {
+            RemovePlayers();
+            EnableJoining();
+        }
+        else
+        {
+            DisableJoining();
+        }
     }
 
     public void HandlePlayerJoin(PlayerInput input)
@@ -50,6 +64,18 @@ public class LocalPlayerConfigurationManager : MonoBehaviour
         return playerConfigs;
     }
 
+    public void ManualPlayerAdd()
+    {
+        PlayerInputManager inputManager = GetComponent<PlayerInputManager>();
+        inputManager.JoinPlayer();
+    }
+
+    public void RemovePlayers()
+    {
+        transform.DestroyChildren();
+        playerConfigs.Clear();
+    }
+
     //public void SetPlayerColor(int index, Material color)
     //{
     //    playerConfigs[index].playerMaterial = color;
@@ -63,6 +89,16 @@ public class LocalPlayerConfigurationManager : MonoBehaviour
             //SceneManager.LoadScene("SampleScene");
             Debug.Log("All players ready");
         }
+    }
+
+    public void EnableJoining()
+    {
+        GetComponent<PlayerInputManager>().EnableJoining();
+    }
+
+    public void DisableJoining()
+    {
+        GetComponent<PlayerInputManager>().DisableJoining();
     }
 }
 

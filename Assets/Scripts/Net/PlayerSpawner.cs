@@ -19,13 +19,12 @@ public class PlayerSpawner : SimulationBehaviour
         spawnedKarts = new GameObject[4];
         spawnedKartIndex = 0;
 
-        //NetworkSpawnOp playerObject = Runner.SpawnAsync(playerPrefab, spawnPoint, Quaternion.identity);  // Spawn the player object
-        //Runner.SetPlayerObject(Runner.LocalPlayer, playerObject.Object);  // Tell the runner that it is the local player
-
+        if (LocalPlayerConfigurationManager.Instance.GetPlayerConfigs().Count == 0) LocalPlayerConfigurationManager.Instance.ManualPlayerAdd();  // Manually add a player if starting the game without one
+        
         var playerConfigs = LocalPlayerConfigurationManager.Instance.GetPlayerConfigs().ToArray();
         for (int i = 0; i < playerConfigs.Length; i++)
         {
-            NetworkSpawnOp playerObject = Runner.SpawnAsync(playerPrefab, spawnPoint, Quaternion.identity, null, OnBeforeSpawned);  // Spawn the player object
+            NetworkSpawnOp playerObject = Runner.SpawnAsync(playerPrefab, spawnPoint + new Vector3(i * 3, 0, 0), Quaternion.identity, null, OnBeforeSpawned);  // Spawn the player object
             Runner.SetPlayerObject(Runner.LocalPlayer, playerObject.Object);  // Tell the runner that it is the local player
         }
     }

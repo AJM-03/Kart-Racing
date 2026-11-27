@@ -25,11 +25,6 @@ public class KartController : MonoBehaviour
 
 
 
-    void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-        canMove = true;
-    }
 
 
 
@@ -83,4 +78,5 @@ public class KartController : MonoBehaviour
     public bool IsBrakeDrifting() { return IsDrifting() && currentInput.Brake; }  // Returns true if the kart is currently brake drifting
     public float GetDriftDirection() { return currentFormScript.driftDirection; }  // Returns the direction that the kart is drifting in, (-1 for left, 1 for right)
     public float GetDriftControl() { return currentFormScript.driftControl; }  // Returns a float showing how tightly the kart is currently drifting
+    public bool IsLocalPlayer() {  return playerNumber >= 1 &&  playerNumber <= 4; }  // Returns true if this kart belongs to a real local player
 }

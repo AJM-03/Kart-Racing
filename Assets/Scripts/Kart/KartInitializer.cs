@@ -12,7 +12,7 @@ public class KartInitializer : MonoBehaviour
         if (kart == null) Debug.LogError("Kart Controller not found by " + this);
 
 
-        if (kart.playerNumber > 4) Initialize(kart.playerNumber);  // If the kart is a bot
+        if (!kart.IsLocalPlayer()) Initialize(kart.playerNumber);  // If the kart is a bot
     }
 
 
@@ -21,32 +21,39 @@ public class KartInitializer : MonoBehaviour
         kart.playerNumber = playerNumber;
 
         Camera cam = transform.GetComponentInChildren<Camera>();
-        if (cam && kart.playerNumber > 4) Destroy(cam.transform.parent.gameObject);
+        if (cam && kart.playerNumber > 1) Destroy(cam.transform.parent.gameObject);
 
         SetInput();
         kart.canMove = true;
         kart.ChangeForm(KartEnums.KartForm.Car, true);
-        kart.rb ??= GetComponentInParent<Rigidbody>();
+        kart.rb = GetComponentInParent<Rigidbody>();
         SetCenterOfMass();
-
-        kart.gameObject.name = "Kart (Player " + kart.playerNumber + ")";
+        SetKartName();
     }
-
 
 
     private void SetInput()
     {
-        if (kart.playerNumber >= 1 && kart.playerNumber <= 4)
+        kart.TryGetComponent<PlayerInputHandler>(out PlayerInputHandler playerInput);
+
+        if (kart.IsLocalPlayer())
         {
-            kart.GetComponentInChildren<PlayerInputHandler>().enabled = true;
-            kart.GetComponentInChildren<PlayerInputHandler>().InitializePlayer(LocalPlayerConfigurationManager.Instance.GetPlayerConfigs()[kart.playerNumber - 1]);
+            if (playerInput) playerInput.enabled = true;
+            if (playerInput) playerInput.InitializePlayer(LocalPlayerConfigurationManager.Instance.GetPlayerConfigs()[kart.playerNumber - 1]);
         }
         else
         {
-            kart.GetComponentInChildren<PlayerInputHandler>().enabled = false;
+            if (playerInput) playerInput.enabled = false;
         }
     }
 
+
+    private void SetKartName()
+    {
+        if (kart.IsLocalPlayer()) kart.gameObject.name = "Kart " + kart.racerIndex + " (Player " + kart.playerNumber + ")";
+        else if (kart.playerNumber == 5) kart.gameObject.name = "Kart " + kart.racerIndex + " (Bot)";
+        else if (kart.playerNumber == 5) kart.gameObject.name = "Kart " + kart.racerIndex + " (Net)";
+    }
 
 
     private void SetCenterOfMass()  // Initializes the kart's rigidbody by setting the centre of mass
