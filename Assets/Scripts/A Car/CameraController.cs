@@ -40,7 +40,7 @@ public class CameraController : MonoBehaviour
     //[SerializeField, Range(0f, 5f)] private float driftCameraHeadingChange = 0.75f;  // How far the camera will move left and right when drifting
 
 
-    void Start()
+    void Awake()
     {
         kart = GetComponentInParent<KartController>();
         if (kart == null) Debug.LogError("Kart Controller not found by " + this);
@@ -55,7 +55,7 @@ public class CameraController : MonoBehaviour
         lookAtStartingPos = lookAt.localPosition;
     }
 
-    void Update()
+    public void UpdateCamera()
     {
         targetOffset = stationaryCamOffset;
         targetFOV = stationaryCamFOV;

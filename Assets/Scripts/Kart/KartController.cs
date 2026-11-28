@@ -13,7 +13,7 @@ public class KartController : MonoBehaviour
 
     [Header("References")]
     [HideInInspector] public Rigidbody rb;  // The kart's rigidBody component
-    private CinemachineVirtualCamera virtualCamera;  // The main camera attached to the kart
+    [SerializeField] private CameraController cameraController;  // The camera logic for the kart
     [SerializeField] private KartWallInteractions wallInteractions;  // Detects and controls the kart's interactions with walls
     [SerializeField] private KartInput inputSource;  // The script that the input should be coming from
 
@@ -30,16 +30,17 @@ public class KartController : MonoBehaviour
 
     private void Update()
     {
-        if (!GetComponent<KartNetworkController>().spawned) return;
+        if (!IsfullyInitialized()) return;
         currentInput = inputSource.GetInput();
         currentFormScript.UpdateKart();
+        cameraController.UpdateCamera();
     }
 
 
 
     private void FixedUpdate()
     {
-        if (!GetComponent<KartNetworkController>().spawned) return;
+        if (!IsfullyInitialized()) return;
         currentFormScript.CalculateKartVelocity();
         wallInteractions.WallDetection();
         currentFormScript.FixedUpdateKart();
@@ -68,6 +69,7 @@ public class KartController : MonoBehaviour
 
 
     // Getters
+    public bool IsfullyInitialized() { return GetComponent<KartNetworkController>().spawned && GetComponent<KartInitializer>().initialized; }
     public float GetVelocityRatio() { return currentFormScript.carVelocityRatio; }  // Returns a float between -1 and 1 showing how fast the kart is moving in relation to it's top speed
     public Vector3 GetVelocity() { return currentFormScript.currentCarLocalVelocity; }  // Returns a vector showing the kart's current velocity
     public bool IsGrounded() { return currentTerrainState == KartEnums.CurrentTerrainState.Land; }  // Returns true if the kart is currently grounded

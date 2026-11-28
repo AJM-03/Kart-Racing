@@ -3390,11 +3390,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartController
   racerIndex: 0
-  playerNumber: 1
+  playerNumber: 0
   canMove: 1
   canTransform: 1
   currentTerrainState: 0
   rb: {fileID: 0}
+  cameraController: {fileID: 5523407310406114658}
   wallInteractions: {fileID: 4814235000004391090}
   inputSource: {fileID: 254040582240865694}
   currentForm: 0
@@ -3606,6 +3607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7282b830e32394b439b267f30a02c038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartInitializer
+  initialized: 0
 --- !u!1 &7768789756224107444
 GameObject:
   m_ObjectHideFlags: 0

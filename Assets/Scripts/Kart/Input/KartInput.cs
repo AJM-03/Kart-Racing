@@ -1,6 +1,5 @@
 using Fusion;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 /* An abstract form of the kart input, will be overriden to allow different forms 
  * of input such as from the local player, network player or AI

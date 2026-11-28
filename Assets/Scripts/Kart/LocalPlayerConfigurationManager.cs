@@ -76,6 +76,11 @@ public class LocalPlayerConfigurationManager : MonoBehaviour
         playerConfigs.Clear();
     }
 
+    public int GetPlayerCount()
+    {
+        return playerConfigs.Count;
+    }
+
     //public void SetPlayerColor(int index, Material color)
     //{
     //    playerConfigs[index].playerMaterial = color;

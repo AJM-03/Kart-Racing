@@ -15689,7 +15689,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &752321212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15823,6 +15823,7 @@ MonoBehaviour:
   canTransform: 1
   currentTerrainState: 0
   rb: {fileID: 0}
+  cameraController: {fileID: 445247648}
   wallInteractions: {fileID: 752321214}
   inputSource: {fileID: 752321213}
   currentForm: 0
@@ -15861,6 +15862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7282b830e32394b439b267f30a02c038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartInitializer
+  initialized: 0
 --- !u!114 &752321219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17142,7 +17144,7 @@ Transform:
   m_GameObject: {fileID: 800331510}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0000000037242216, y: -8.1242074e-20, z: 4.0246735e-21, w: 1}
-  m_LocalPosition: {x: 10, y: -0.00000001362721, z: -0.00000028426362}
+  m_LocalPosition: {x: 6.72, y: -0.0000000091574845, z: -0.00000019102515}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -40153,6 +40155,7 @@ MonoBehaviour:
   canTransform: 1
   currentTerrainState: 0
   rb: {fileID: 0}
+  cameraController: {fileID: 776801118}
   wallInteractions: {fileID: 1958488024}
   inputSource: {fileID: 1958488023}
   currentForm: 0
@@ -40203,6 +40206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7282b830e32394b439b267f30a02c038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartInitializer
+  initialized: 0
 --- !u!114 &1958488030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42313,6 +42317,7 @@ MonoBehaviour:
   canTransform: 1
   currentTerrainState: 0
   rb: {fileID: 0}
+  cameraController: {fileID: 95888456}
   wallInteractions: {fileID: 2125592416}
   inputSource: {fileID: 2125592415}
   currentForm: 0
@@ -42363,6 +42368,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7282b830e32394b439b267f30a02c038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KartInitializer
+  initialized: 0
 --- !u!114 &2125592422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42426,7 +42432,7 @@ Transform:
   m_GameObject: {fileID: 2126725816}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0000000037242216, y: -8.1242074e-20, z: 4.0246735e-21, w: 1}
-  m_LocalPosition: {x: 3.28, y: -0.0000000044697246, z: -0.00000009323846}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

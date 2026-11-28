@@ -12,6 +12,7 @@ public class KartDebugger : MonoBehaviour
 
     void Update()
     {
+        if (!kart.IsfullyInitialized()) return;
         UpdateDebugStats();
     }
 
